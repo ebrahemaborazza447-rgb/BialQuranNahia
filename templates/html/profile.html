@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الملف الشخصي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- الهيدر -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><img src="{% static 'images/logo.png' %}" alt="Logo" height="30"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="#">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">المكتبة</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">المعلمين</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">متجري</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">الدعم</a></li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <span class="me-2">{{ user.username }}</span>
+        <img src="{% static 'images/user.jpg' %}" class="rounded-circle" height="40" width="40">
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- المحتوى الرئيسي -->
+<div class="container-fluid mt-4">
+  <div class="row">
+
+    <!-- يسار: الإحصائيات -->
+    <div class="col-lg-9">
+      <div class="row g-3">
+
+        <!-- الصناديق الصغيرة -->
+        <div class="col-md-3">
+          <div class="card p-3 text-center stat-card">
+            <p>المراجعات</p>
+            <h3 class="text-primary">85</h3>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 text-center stat-card">
+            <p>الأجزاء المحفوظة</p>
+            <h3 class="text-success">12</h3>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 text-center stat-card">
+            <p>التقييم</p>
+            <h3 class="text-warning">4.7</h3>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 text-center stat-card">
+            <p>الالتزام</p>
+            <h3 class="text-danger">92%</h3>
+          </div>
+        </div>
+
+        <!-- التقدم -->
+        <div class="col-12">
+          <div class="card p-4">
+            <h5>تقدمك في الحفظ</h5>
+            <div class="progress my-3" style="height: 25px;">
+              <div class="progress-bar bg-success" style="width: 40%;">40%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- الرسم البياني -->
+        <div class="col-12">
+          <div class="card p-4">
+            <h5>تقدم الخطة الأسبوعي</h5>
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- يمين: البروفايل -->
+    <div class="col-lg-3">
+      <div class="card p-3 text-center">
+        <img src="{% static 'images/user.jpg' %}" class="rounded-circle mx-auto mb-3" width="100" height="100">
+        <h5>{{ user.first_name }} {{ user.last_name }}</h5>
+        <p class="text-muted">المستوى الحالي: متوسط</p>
+        <hr>
+        <h6>الإنجازات</h6>
+        <div class="d-flex justify-content-around mt-2">
+          <span class="badge bg-primary">🏆 مميز</span>
+          <span class="badge bg-success">⭐ محترف</span>
+          <span class="badge bg-warning">🔥 نشيط</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('weeklyChart');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+        datasets: [{
+            label: 'الإنجازات',
+            data: [5, 10, 7, 15, 12, 20, 18],
+            borderWidth: 2,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!-- templates/html/meeting.html -->
+<div class="w-full h-[80vh]" id="jitsi"></div>
+<script src="https://meet.jit.si/external_api.js"></script>
+<script>
+  const domain = "meet.jit.si";
+  const options = {
+    roomName: "{{ room_name }}",        // اسم الغرفة (فريد)
+    parentNode: document.querySelector('#jitsi'),
+    userInfo: { displayName: "{{ request.user.name|default:'ضيف' }}" },
+    configOverwrite: {
+      // أمثلة لضبط الإعدادات
+      startWithAudioMuted: true,
+      startWithVideoMuted: false,
+    },
+    interfaceConfigOverwrite: {
+      SHOW_JITSI_WATERMARK: false,
+    }
+  };
+  const api = new JitsiMeetExternalAPI(domain, options);
+
+  // أمثلة للتحكم:
+  // api.executeCommand('toggleAudio');
+  // api.addEventListener('videoConferenceJoined', () => { ... });
+</script>
