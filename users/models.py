@@ -370,3 +370,13 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.title}"
+# models.py
+class Meeting(models.Model):
+    lesson = models.OneToOneField('Lesson', on_delete=models.CASCADE, related_name='meeting')
+    room_name = models.CharField(max_length=128, unique=True)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.lesson} – {self.room_name}"
