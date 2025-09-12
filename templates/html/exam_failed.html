@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>فشل الامتحان</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Tajawal", sans-serif;
+            background: #f8f9fa;
+        }
+        .navbar {
+            background-color: #18332B;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 30px;
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .navbar .logo img {
+            height: 40px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .exam-fail-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 12px;
+            background: #fff3f3;
+            border: 1px solid #f5c2c7;
+            text-align: center;
+        }
+        .exam-fail-container h3 {
+            color: #842029;
+            margin-bottom: 15px;
+        }
+        .exam-fail-container p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            background-color: #18332B;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background-color: #145c45;
+        }
+    </style>
+</head>
+<body>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <a href="{% url 'inbox' %}">
+                <img src="{% static 'images/logo.png' %}" alt="شعار المنصة">
+            </a>
+            <a href="{% url 'inbox' %}">
+                <span>بالقرآن نحيا</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- رسالة الفشل -->
+    <div class="exam-fail-container">
+        <h3>❌ لقد فشلت في الامتحان</h3>
+        <p>لا يمكنك الاشتراك حالياً. حاول أن تحل الامتحان ثانية.</p>
+        
+        {% if score %}
+            <p>نتيجتك: <strong>{{ score }}</strong></p>
+            {% if percentage %}
+                <p>النسبة المئوية: <strong>{{ percentage|floatformat:2 }}%</strong></p>
+            {% endif %}
+        {% else %}
+            <p style="color: #842029;">لا توجد بيانات متاحة لعرض نتيجتك.</p>
+        {% endif %}
+
+        <!-- هنا اللينك الديناميكي للامتحان -->
+        <a href="{% url 'google_form' exam.id %}" class="btn btn-primary mt-3">إعادة المحاولة</a>
+        
+        <br><br>
+        <a href="{% url 'inbox' %}" class="btn btn-primary">⬅ الرجوع للصفحة الرئيسية</a>
+    </div>
+
+</body>
+</html>

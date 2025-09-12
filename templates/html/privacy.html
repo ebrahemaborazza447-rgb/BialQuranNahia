@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سياسة الخصوصية - بالقرآن نحيا</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            margin: 25px 0 15px;
+            padding-right: 10px;
+            border-right: 4px solid var(--secondary-color);
+        }
+        
+        p, ul {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul {
+            padding-right: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            background-color: #fffde7;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .contact-email {
+            color: var(--accent-color);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>سياسة الخصوصية</h1>
+            <p>آخر تحديث: 12 سبتمبر 2024</p>
+        </header>
+        
+        <section>
+            <h2>مقدمة</h2>
+            <p>في منصة تعليم القرآن الكريم – "بالقرآن نحيا" نلتزم بحماية خصوصية مستخدمينا (طلاب، معلمون، أولياء أمور). توضح هذه السياسة كيفية جمع واستخدام وحماية بياناتك عند الاستفادة من خدمات المنصة.</p>
+        </section>
+        
+        <section>
+            <h2>البيانات التي نجمعها</h2>
+            <ul>
+                <li>بيانات شخصية عند التسجيل: (الاسم، البريد الإلكتروني، رقم الهاتف).</li>
+                <li>بيانات الدفع والمعاملات عبر وسائل الدفع الآمنة.</li>
+                <li>بيانات الاستخدام مثل وقت الدخول، الصفحات التي تزورها، نوع الجهاز والمتصفح.</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>كيفية استخدام بياناتك</h2>
+            <ul>
+                <li>لتقديم الخدمة التعليمية وتتبع تقدمك في الحفظ والمراجعة.</li>
+                <li>للتواصل معك بخصوص الحصص أو التقييمات أو العروض.</li>
+                <li>لتحسين تجربة المستخدم وتطوير المناهج.</li>
+                <li>للتواصل معك بخصوص الحصص أو التقييمات أو العروض.</li>
+                <li>للامتثال للأنظمة والقوانين المعمول بها.</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>حماية البيانات</h2>
+            <ul>
+                <li>نستخدم بروتوكولات آمنة (SSL) لحماية بيانات الدفع.</li>
+                <li>لا تتم مشاركة معلوماتك إلا مع جهات موثوقة (مثل بوابات الدفع).</li>
+                <li>نطبق معايير صارمة لمنع الوصول غير المصرح به.</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>حقوقك</h2>
+            <p>لك الحق في طلب تعديل أو حذف بياناتك.</p>
+            <p>يمكنك التواصل معنا عبر البريد الإلكتروني: <a href="mailto:info@quranacademy.com" class="contact-email">info@quranacademy.com</a>.</p>
+        </section>
+    </div>
+    
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Add animation on scroll
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateX(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateX(20px)';
+                section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

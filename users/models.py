@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 import uuid
 # User Manager
@@ -43,7 +44,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-
+    class Meta:
+        verbose_name = _("المستخدمين علي الموقع ")
+        verbose_name_plural = _("المستخدمين علي الموقع ")
 # Teacher
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
@@ -51,6 +54,7 @@ class Teacher(models.Model):
 
     def __str__(self):
         return self.name
+    
 
 
 def get_default_teacher():
@@ -90,10 +94,13 @@ class StudentProfile(models.Model):
     monthly_level = models.CharField(max_length=20, choices=LEVEL_CHOICES, blank=True, null=True, verbose_name="التقييم الشهري")
     yearly_level = models.CharField(max_length=20, choices=LEVEL_CHOICES, blank=True, null=True, verbose_name="التقييم السنوي")
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default="مبتدئ")  # 👈 رجّعه هنا
-
+    def is_complete(self):
+        return bool(self.user and self.current_surah and self.current_juz and self.age and self.city and self.image)
     def __str__(self):
         return self.user.name
-    
+    class Meta:
+        verbose_name = _("معلومات  الطالب")
+        verbose_name_plural = _("معلومات  الطلاب")
 class Meta:
     unique_together = ('student', 'day')
 class WeeklyProgress(models.Model):
@@ -135,6 +142,9 @@ class WeeklyProgress(models.Model):
         blank=True,
         null=True
     )
+    class Meta:
+        verbose_name = _("التقييم الأسبوعي")
+        verbose_name_plural = _("التقيمات الأسبوعية")
 class Appointment(models.Model):
     PHASE_CHOICES = [
         ("beginner", "مبتدئ"),
@@ -156,17 +166,24 @@ class Appointment(models.Model):
         ("thursday", "الخميس"),
         ("friday", "الجمعة"),
     ]
-    plan = models.ForeignKey('users.Plan', on_delete=models.CASCADE, null=True, blank=True)
+    plan = models.ForeignKey('users.Plan', on_delete=models.CASCADE, verbose_name="الخطة", null=True, blank=True)
     phase = models.CharField(max_length=20, choices=PHASE_CHOICES, verbose_name="المرحلة", default="beginner")
     period = models.CharField(max_length=20, choices=PERIOD_CHOICES, default="am", verbose_name="الفترة")
     day_of_week = models.CharField(max_length=20, verbose_name="اليوم", default="غير محدد")
     date = models.DateField(null=True, blank=True, verbose_name="التاريخ (اختياري)")
     start_time = models.TimeField(verbose_name="وقت البداية", default="00:00")
     trainer = models.CharField(max_length=100, verbose_name="المدرب", default="غير محدد")
-    is_booked = models.BooleanField(default=False, verbose_name="محجوز؟")
-    booked_by = models.ForeignKey("CustomUser", on_delete=models.SET_NULL, null=True, blank=True)
     day = models.CharField(max_length=20, choices=DAYS_CHOICES, null=True, blank=True)
+      # الحقول الخاصة بالحجز
+    is_public = models.BooleanField(default=False,verbose_name="موعد عام ")  # فردي أو جماعي
+    is_booked = models.BooleanField(default=False,verbose_name="موعد خاص")  # يستخدم بس للفردي
+    booked_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,verbose_name="الشخص الحاجز")
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="group_appointments", blank=True)
 
+    def is_available(self):
+        if self.is_public:
+            return True  # الجماعي دايمًا متاح (إلا لو عامل limit)
+        return not self.is_booked  # الفردي متاح بس لو مش محجوز
     def __str__(self):
         return f"{self.get_phase_display()} - {self.get_day_display()} {self.start_time} ({self.get_period_display()}) - {self.trainer}"
 
@@ -175,6 +192,10 @@ class Appointment(models.Model):
             raise ValidationError("الوقت يشير إلى فترة مسائية، لكن اخترت صباحاً.")
         if self.start_time.hour < 12 and self.period == "pm":
             raise ValidationError("الوقت يشير إلى فترة صباحية، لكن اخترت مساءً.")
+
+    class Meta:
+        verbose_name = _("المواعيد")
+        verbose_name_plural = _("المواعيد")
 # Badge
 class Badge(models.Model):
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
@@ -201,6 +222,9 @@ class Lesson(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = _("درس")              # 👈 اسم مفرد
+        verbose_name_plural = _("الدروس")    # 👈 اسم جمع
 # Evaluation
 class Evaluation(models.Model):
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
@@ -218,7 +242,9 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f"{self.student.user.name} - {self.stars} نجوم"
-
+    class Meta:
+            verbose_name = _("التقييم العام ")
+            verbose_name_plural = _("التقيمات العامه ")
 # Message
 class Message(models.Model):
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
@@ -227,10 +253,13 @@ class Message(models.Model):
     text = models.TextField()
     def __str__(self):
         return f"{self.teacher} > {self.student}"
-
+    class Meta:
+        verbose_name = _("الرساله ")
+        verbose_name_plural = _("الرسائل")
 # Plan
 class Plan(models.Model):
-    custom_id = models.PositiveIntegerField(unique=True, null=True, blank=True, verbose_name="Plan Code")
+    plan_code = models.PositiveIntegerField(unique=True, null=True, blank=True, verbose_name="Plan Code")
+    exam = models.ForeignKey("Exam", on_delete=models.SET_NULL, null=True, blank=True, related_name="plans")
 
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
@@ -241,6 +270,10 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = _("خطط الاشتراك ")
+        verbose_name_plural = _("خطط الاشتراك ")
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -300,9 +333,25 @@ class Subscription(models.Model):
         return f"{user_label} – {plan_label} – {status_label}"
 
     def save(self, *args, **kwargs):
+    # لو مفيش end_date و فيه مدة للخطة → نحسبها
         if not self.end_date and self.plan and self.plan.duration_days:
             self.end_date = timezone.now() + timedelta(days=self.plan.duration_days)
+
+        # لازم نستدعي save الأصلي الأول عشان يبقى عندنا ID صالح
         super().save(*args, **kwargs)
+
+        # بعد ما يتحفظ الاشتراك نعدل المواعيد المرتبطة
+        appointments = Appointment.objects.filter(plan=self.plan)
+
+        if self.status == "approved":
+            for app in appointments:
+                app.participants.add(self.user)
+        elif self.status in ["rejected", "expired", "canceled"]:
+            for app in appointments:
+                app.participants.remove(self.user)
+    class Meta:
+        verbose_name = _("طلبات الاشتراك")
+        verbose_name_plural = _("طلبات الاشتراك")
 
 # Payment
 class Payment(models.Model):
@@ -314,8 +363,10 @@ class Payment(models.Model):
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return f"دفع {self.student} - {self.status}"
-    
-    
+    class Meta:
+        verbose_name = _("فواتير الدفع")
+        verbose_name_plural = _("فواتير الدفع")
+
 def generate_room_name():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=12))
 class ReviewPlan(models.Model):
@@ -353,6 +404,9 @@ class ReviewPlan(models.Model):
     def __str__(self):
         return f"{self.student.user.name} - {self.title}"
 
+    class Meta:
+        verbose_name = _("خطط المراجعه للطالب ")
+        verbose_name_plural = _("خطط المراجعه للطلاب ")
 class ReviewTask(models.Model):
     plan = models.ForeignKey("ReviewPlan", related_name="tasks", on_delete=models.CASCADE)
     description = models.CharField(max_length=255)
@@ -370,6 +424,9 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.title}"
+    class Meta:
+        verbose_name = _("الاشعارات ")
+        verbose_name_plural = _("الاشعارات")
 # models.py
 class Meeting(models.Model):
     lesson = models.OneToOneField('Lesson', on_delete=models.CASCADE, related_name='meeting')
@@ -380,3 +437,105 @@ class Meeting(models.Model):
 
     def __str__(self):
         return f"{self.lesson} – {self.room_name}"
+    class Meta:
+        verbose_name = _("لينك الاجتماع  ")
+        verbose_name_plural = _("الاجتماعات")
+class GoogleFormResult(models.Model):
+    exam = models.ForeignKey(
+        "Exam", on_delete=models.CASCADE, related_name="results", null=True, blank=True
+    )
+    email = models.EmailField("البريد الإلكتروني")
+    score = models.CharField("النتيجة", max_length=50)
+    percentage = models.FloatField("النسبة المئوية", null=True, blank=True)  # حقل إضافي
+    answers = models.JSONField("كل الإجابات", blank=True, null=True)
+    form_date = models.DateTimeField(null=True, blank=True)
+    submitted_at = models.DateTimeField("تاريخ الحفظ", auto_now_add=True)
+
+    def calculate_percentage(self):
+        """تحويل النص (مثلاً 4/5) إلى نسبة مئوية"""
+        try:
+            num, den = map(int, self.score.split("/"))
+            return (num / den) * 100
+        except Exception:
+            return None
+
+    def save(self, *args, **kwargs):
+        # قبل الحفظ احسب النسبة
+        self.percentage = self.calculate_percentage()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["exam", "email", "form_date", "score"], name="unique_exam_result"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.exam.title if self.exam else 'No Exam'} - {self.email} - {self.score} ({self.percentage}%)"
+
+
+class Exam(models.Model):
+    STAGES = (
+        (1, "مبتدئ"),
+        (2, "متوسط"),
+        (3, "متقدم"),
+        (4, "متخصص"),
+        (7, "المقرأة العامة"),
+    )
+
+    title = models.CharField(max_length=200, verbose_name="عنوان الامتحان", null=True, blank=True)
+    stage = models.PositiveSmallIntegerField(choices=STAGES, verbose_name="المرحلة", null=True, blank=True)
+    google_form_link = models.URLField(verbose_name="رابط Google Form", null=True, blank=True)
+    google_sheet_url = models.URLField(verbose_name="رابط Google Sheet", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def sheet_id(self):
+        try:
+            return self.google_sheet_url.split("/d/")[1].split("/")[0]
+        except:
+            return None
+
+    @property
+    def form_id(self):
+        try:
+            return self.google_form_link.split("/d/")[1].split("/")[0]
+        except:
+            return None
+
+    @property
+    def form_url(self):
+        if self.form_id:
+            return f"https://docs.google.com/forms/d/{self.form_id}/viewform"
+        return self.google_form_link
+
+    def __str__(self):
+        return f"{self.title} ({self.get_stage_display()})"
+class ContactMessage(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="contact_messages"
+    )
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    message = models.TextField()
+    status = models.CharField(max_length=50, default="unread")
+    created_at = models.DateTimeField(auto_now_add=True)
+    admin_notes = models.TextField(blank=True, null=True)
+
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies"
+    )
+
+    is_read = models.BooleanField(default=False)  # <--- أضف ده
+
+    def __str__(self):
+        return f"{self.name} - {self.status}"

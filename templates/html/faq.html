@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأسئلة الشائعة - بالقرآن نحيا</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --accent-color: #e67e22;
+            --text-color: #2c3e50;
+            --light-bg: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.8;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .search-container {
+            margin: 20px 0 30px;
+            position: relative;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .search-container input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .faq-category {
+            margin: 30px 0;
+        }
+        
+        .faq-category h2 {
+            color: var(--secondary-color);
+            margin: 25px 0 15px;
+            padding-right: 10px;
+            border-right: 4px solid var(--secondary-color);
+        }
+        
+        .faq-item {
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .faq-item:hover {
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faq-question {
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .faq-question:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .faq-question::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            transition: var(--transition);
+        }
+        
+        .faq-item.active .faq-question::after {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background-color: white;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 15px 20px;
+            max-height: 500px;
+            border-top: 1px solid #eee;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            display: none;
+        }
+        
+        .back-to-top {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background-color: var(--secondary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        
+        .back-to-top:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .faq-question {
+                padding: 12px 15px;
+                font-size: 0.95em;
+            }
+            
+            .back-to-top {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                bottom: 20px;
+                left: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>الأسئلة الشائعة</h1>
+            <p>ابحث عن سؤالك أو تصفح الأسئلة أدناه</p>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" id="faqSearch" placeholder="ابحث في الأسئلة الشائعة...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <div id="faqContainer">
+            <div class="faq-category">
+                <h2>التسجيل والمحفظ</h2>
+                <div class="faq-item">
+                    <div class="faq-question">كيف أسجل في المنصة؟</div>
+                    <div class="faq-answer">
+                        <p>للتسجيل في منصة "بالقرآن نحيا":</p>
+                        <ol>
+                            <li>اضغط على زر "إنشاء حساب جديد" في الصفحة الرئيسية.</li>
+                            <li>املأ النموذج بالبيانات المطلوبة (الاسم، البريد الإلكتروني، كلمة المرور).</li>
+                            <li>سيتم إرسال رمز تحقق إلى بريدك الإلكتروني.</li>
+                            <li>أدخل رمز التحقق لتفعيل حسابك.</li>
+                            <li>يمكنك بعدها اختيار المحفظ المناسب وبدء رحلتك التعليمية.</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">هل يمكن تغيير المحفظ بعد بدء الدراسة؟</div>
+                    <div class="faq-answer">
+                        <p>نعم، يمكنك طلب تغيير المحفظ في أي وقت من خلال:</p>
+                        <ul>
+                            <li>الدخول إلى إعدادات الحساب.</li>
+                            <li>الذهاب إلى قسم "إدارة الاشتراك".</li>
+                            <li>اختيار "تغيير المحفظ" واتباع التعليمات.</li>
+                        </ul>
+                        <p>ملاحظة: قد يتم تطبيق رسوم إدارية في حال تغيير المحفظ بعد بدء الجلسات.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-category">
+                <h2>الدفع والاشتراكات</h2>
+                <div class="faq-item">
+                    <div class="faq-question">ما هي طرق الدفع المتاحة؟</div>
+                    <div class="faq-answer">
+                        <p>نوفر عدة طرق دفع آمنة وسهلة:</p>
+                        <ul>
+                            <li>البطاقات الائتمانية (فيزا، ماستركارد، مدى)</li>
+                            <li>المحافظ الإلكترونية (STC Pay، أبل باي، فيزا كارد المدفوعة مسبقاً)</li>
+                            <li>التحويل البنكي المباشر</li>
+                            <li>مدفوعات آبل (لأجهزة آيفون وآيباد)</li>
+                        </ul>
+                        <p>جميع عمليات الدفع تتم عبر بوابات دفع آمنة ومشفرة.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">هل يمكن استرجاع الرسوم في حال الرغبة في الإلغاء؟</div>
+                    <div class="faq-answer">
+                        <p>نعم، يمكنك طلب استرداد المبلغ في الحالات التالية:</p>
+                        <ul>
+                            <li>قبل بدء الجلسات: استرداد كامل المبلغ المدفوع.</li>
+                            <li>بعد الجلسة الأولى: استرداد 70% من المبلغ المتبقي.</li>
+                            <li>بعد الجلستين الأوليين: استرداد 50% من المبلغ المتبقي.</li>
+                        </ul>
+                        <p>لطلب الاسترداد، يرجى التواصل مع خدمة العملاء عبر البريد الإلكتروني <a href="mailto:support@quranacademy.com">support@quranacademy.com</a>.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-category">
+                <h2>المتابعة والتقارير</h2>
+                <div class="faq-item">
+                    <div class="faq-question">ك يمكنني متابعة تقدم ابني/ابنتي؟</div>
+                    <div class="faq-answer">
+                        <p>نوفر عدة طرق لمتابعة تقدم الطالب:</p>
+                        <ol>
+                            <li>تقرير أسبوعي مفصل يصل إلى بريد ولي الأمر.</li>
+                            <li>منصة أولياء الأمور لمتابعة الحضور والانصراف.</li>
+                            <li>تقييم شهري لمستوى الطالب.</li>
+                            <li>إمكانية التواصل المباشر مع المحفظ.</li>
+                        </ol>
+                        <p>يمكنك تفعيل خاصية التنبيهات للاطلاع على أحدث المستجدات.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">هل يمكن تغيير موعد الحصة؟</div>
+                    <div class="faq-answer">
+                        <p>نعم، يمكنك تغيير موعد الحصة بشرط مراعاة ما يلي:</p>
+                        <ul>
+                            <li>يجب إبلاغنا قبل الحصة بـ 24 ساعة على الأقل.</li>
+                            <li>يسمح بتأجيل حصتين شهرياً كحد أقصى.</li>
+                            <li>يتم تحديد الموعد البديل حسب توفر المحفظ.</li>
+                        </ul>
+                        <p>لطلب تغيير الموعد، يرجى الدخول إلى لوحة التحكم واختيار "إعادة جدولة الحصة".</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-category">
+                <h2>متطلبات النظام</h2>
+                <div class="faq-item">
+                    <div class="faq-question">ما هي متطلبات استخدام المنصة؟</div>
+                    <div class="faq-answer">
+                        <p>للاستمتاع بتجربة تعليمية سلسة، ننصح بالتأكد من توفر المتطلبات التالية:</p>
+                        <p><strong>لأجهزة الكمبيوتر:</strong></p>
+                        <ul>
+                            <li>متصفح حديث (Google Chrome، Firefox، Safari، Edge)</li>
+                            <li>اتصال بالإنترنت بسرعة 2 ميجابت/ثانية على الأقل</li>
+                            <li>ميكروفون وسماعات رأس (يوصى باستخدام سماعة رأس لتقليل التشويش)</li>
+                            <li>كاميرا ويب (مفضلة وليست إلزامية)</li>
+                        </ul>
+                        <p><strong>للأجهزة الذكية:</strong></p>
+                        <ul>
+                            <li>أجهزة أندرويد: إصدار 8.0 أو أحدث</li>
+                            <li>أجهزة آيفون/آيباد: iOS 13 أو أحدث</li>
+                            <li>تطبيق Zoom (لجلسات البث المباشر)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="no-results" id="noResults">
+            <i class="fas fa-search fa-3x" style="color: #ddd; margin-bottom: 15px;"></i>
+            <p>لم نتمكن من العثور على نتائج مطابقة لبحثك</p>
+            <p>حاول استخدام كلمات بحث أخرى أو تصفح الأسئلة أعلاه</p>
+        </div>
+        
+        <div class="contact-support" style="text-align: center; margin: 40px 0 20px; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+            <h3>لم تجد إجابتك؟</h3>
+            <p>فريق الدعم متاح لمساعدتك على مدار الساعة</p>
+            <a href="contact" style="display: inline-block; margin-top: 10px; padding: 10px 25px; background-color: var(--secondary-color); color: white; text-decoration: none; border-radius: 30px; transition: var(--transition);">تواصل معنا</a>
+        </div>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script>
+        // Accordion functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            const searchInput = document.getElementById('faqSearch');
+            const noResults = document.getElementById('noResults');
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            // Toggle FAQ items
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    // Close all other items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-answer').style.maxHeight = null;
+                        }
+                    });
+                    
+                    // Toggle current item
+                    item.classList.toggle('active');
+                    const answer = item.querySelector('.faq-answer');
+                    
+                    if (item.classList.contains('active')) {
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                    } else {
+                        answer.style.maxHeight = null;
+                    }
+                });
+            });
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasResults = false;
+                
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                    const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                    
+                    if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                        item.style.display = '';
+                        hasResults = true;
+                        
+                        // Highlight matching text
+                        if (searchTerm.length > 2) {
+                            const regex = new RegExp(searchTerm, 'gi');
+                            const questionText = item.querySelector('.faq-question').innerHTML;
+                            const answerText = item.querySelector('.faq-answer').innerHTML;
+                            
+                            item.querySelector('.faq-question').innerHTML = questionText.replace(regex, 
+                                match => `<span style="background-color: #fff9c4; padding: 0 2px; border-radius: 3px;">${match}</span>`);
+                                
+                            item.querySelector('.faq-answer').innerHTML = answerText.replace(regex, 
+                                match => `<span style="background-color: #fff9c4; padding: 0 2px; border-radius: 3px;">${match}</span>`);
+                        }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide categories based on visible items
+                document.querySelectorAll('.faq-category').forEach(category => {
+                    const visibleItems = category.querySelectorAll('.faq-item[style=""]').length;
+                    const totalItems = category.querySelectorAll('.faq-item').length;
+                    
+                    if (visibleItems === 0 && searchTerm.length > 0) {
+                        category.style.display = 'none';
+                    } else {
+                        category.style.display = '';
+                    }
+                });
+                
+                // Show no results message if no matches
+                noResults.style.display = hasResults || searchTerm.length === 0 ? 'none' : 'block';
+            });
+            
+            // Back to top button
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.style.display = 'block';
+                } else {
+                    backToTopBtn.style.display = 'none';
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Open first FAQ item by default on page load
+            if (faqItems.length > 0) {
+                faqItems[0].classList.add('active');
+                faqItems[0].querySelector('.faq-answer').style.maxHeight = 
+                    faqItems[0].querySelector('.faq-answer').scrollHeight + 'px';
+            }
+        });
+    </script>
+</body>
+</html>

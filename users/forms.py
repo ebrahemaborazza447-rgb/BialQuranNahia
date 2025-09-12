@@ -39,3 +39,22 @@ class SubscriptionForm(forms.ModelForm):
         if not payment_image:
             raise forms.ValidationError("يجب رفع صورة إيصال الدفع.")
         return payment_image
+from django import forms
+from .models import ContactMessage
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = ContactMessage
+        fields = ['message']  # المستخدم هيكتب الرسالة فقط
+        widgets = {
+            'message': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'rows': 5,
+                    'placeholder': 'اكتب رسالتك هنا...'
+                }
+            )
+        }
+        labels = {
+            'message': 'الرسالة'
+        }

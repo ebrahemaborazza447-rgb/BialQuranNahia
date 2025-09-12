@@ -1,4 +1,6 @@
 {% load static %}
+{% load socialaccount %}   {# 👈 مهم عشان يشتغل provider_login_url #}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,38 +24,46 @@
     <div class="login-box row g-0">
         <!-- Left side -->
         <div class="login-left col-md-6">
-            <h4 class="mb-4">Welcome back</h4>
+            <h4 class="mb-4">مرحبا بك مجددا</h4>
+             <!-- مكان عرض رسائل الخطأ -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
             <form method="POST">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label>Email address</label>
+                    <label>البريد الإلكتروني</label>
                     <input type="email" name="email" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label>Password</label>
+                    <label>كلمة المرور</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <div>
-                        <input type="checkbox" name="remember"> Remember for 30 days
+                        <input type="checkbox" name="remember"> تذكرني لمدة 30 يومًا
                     </div>
-                    <a href="#">Forgot password?</a>
+                    <a href="#">نسيت كلمة المرور؟</a>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">login</button>
+                <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
                 <div class="text-center mt-3">
-                    <button type="button" class="btn btn-outline-secondary w-100">
-                        <img src="{% static 'google-icon.png' %}" alt="Google" style="height:20px; margin-right:8px;"> Sign in with Google
-                    </button>
+                    <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary w-100">
+<img src="{% static 'images/Google__G__logo.svg.webp' %}" alt="Google" style="height:20px; margin-right:8px;">
+                        سجل الدخول بي حساب جوجل 
+                    </a>
                 </div>
                 <p class="text-center mt-3">
-                    Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+                    لديك حساب بالفعل؟ <a href="{% url 'signup' %}">إنشاء حساب</a>
                 </p>
             </form>
         </div>
 
         <!-- Right side -->
         <div class="login-right col-md-6">
-            <h1>    Welcome to BialQuranNahia Website </h1>
+            <h1>مرحبًا بك في موقع BialQuranNahia</h1>
         </div>
     </div>
 </div>

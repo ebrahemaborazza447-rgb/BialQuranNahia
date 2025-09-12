@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,16 +39,47 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',   # 👈 لازم تضيف السطر ده
+
     "django_crontab",
     "django_apscheduler",
+
+    # Allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    
     # Apps
     'users.apps.UsersConfig',
-   
     'products',
     'orders',
     'cart',
     'reviews',
 ]
+
+
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+LOGIN_REDIRECT_URL = "/inbox"   # أو dashboard حسب ما تحب
+LOGOUT_REDIRECT_URL = "/inbox"
+
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+# تسجيل الدخول عبر الايميل فقط
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# الحقول المطلوبة في الفورم وقت التسجيل
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+
+# مفيش username في الموديل
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,6 +89,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
+
 ]
 
 ROOT_URLCONF = 'ecommerce.urls'
@@ -73,6 +105,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.unread_messages_count',
+
             ],
         },
     },
@@ -81,25 +115,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-#DATABASES = {
-#    'default': {
-   #     'ENGINE': 'django.db.backends.postgresql',
-   #     'NAME': 'ecommerce',
-   #     'USER': 'ecommerce',
-   #     'PASSWORD': '032165',
-   #     'HOST': 'localhost',
-   #     'PORT': '5432',
-   #  }
-#}
+DATABASES = {
+   'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecommerce',
+      'USER': 'ecommerce',
+        'PASSWORD': '032165',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 
 
@@ -151,6 +185,8 @@ MEDIA_ROOT = os.path.join(str(BASE_DIR), 'media')
 # python manage.py collectstatic
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+DEFAULT_FROM_EMAIL = 'no-reply@yourdomain.com'
+ADMIN_EMAIL = 'admin@yourdomain.com'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -158,3 +194,19 @@ LOGIN_URL = 'login'
 CRONJOBS = [
     ('0 17 * * *', 'users.cron.send_daily_notifications'),  # كل يوم الساعة 5 م
 ]
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '761595963318-0magr3knb70sgjchi17os6liqjddbeeh.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "offline",
+        }
+    }
+}

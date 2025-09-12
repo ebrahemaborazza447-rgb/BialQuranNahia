@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تواصل معنا - بالقرآن نحيا</title>
+    <!-- Bootstrap RTL CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tajawal Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a3a30;
+            --secondary: #c9b67a;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --light-gray: #e9ecef;
+            --blue: #0d6efd;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding-top: 70px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--primary) !important;
+            border-bottom: 2px solid var(--secondary);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-left: 10px;
+        }
+
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+        }
+
+        .btn-outline-light {
+            border-color: var(--secondary);
+            color: white;
+            margin-right: 5px;
+        }
+
+        .btn-outline-light:hover {
+            background-color: var(--secondary);
+            color: var(--primary);
+        }
+
+        /* Contact Form Styles */
+        .contact-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 800px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-container:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .contact-container h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .contact-container h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .contact-links a {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--light);
+            border-radius: 50px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            font-weight: 500;
+        }
+
+        .contact-links a:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(201, 182, 122, 0.3);
+        }
+
+        .contact-links i {
+            margin-left: 8px;
+            font-size: 1.2em;
+        }
+
+        .form-control,
+        .form-select {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 0.25rem rgba(201, 182, 122, 0.25);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1em;
+            width: 100%;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit:hover {
+            background: #b89a4c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contact Info Boxes */
+        .contact-info {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .contact-info:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-info i {
+            font-size: 2.5em;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .contact-info h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .contact-info p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--secondary);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            height: 50px;
+            margin-left: 15px;
+        }
+
+        .footer-about p {
+            color: #ddd;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .footer-links h4 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-links h4:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+            padding-right: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-left: 10px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .contact-container {
+                padding: 25px;
+                margin: 20px 15px;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contact-links a {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .footer-logo {
+                justify-content: center;
+            }
+
+            .footer-about,
+            .footer-links {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .footer-links h4:after {
+                right: 50%;
+                transform: translateX(50%);
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b89a4c;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'inbox' %}">
+                <img src="{% static 'images/logo.png' %}" alt="شعار المنصة">
+                بالقرآن نحيا
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل التنقل">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inbox' %}">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about_me' %}">المعلمون</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'contact' %}">تواصل معنا</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <a href="/admin/" class="btn btn-outline-light me-2">
+                        <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'student_dashboard' %}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-user"></i> صفحتي
+                    </a>
+                    
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Section -->
+    <div class="container my-5 fade-in">
+        <div class="contact-container">
+            <h2>تواصل معنا</h2>
+            <p class="text-center mb-5">نحن هنا لمساعدتك. لا تتردد في التواصل معنا لأي استفسارات أو ملاحظات.</p>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="contact-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>عنواننا</h4>
+                        <p>دمياط الجديدة، دمياط، مصر</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="contact-info">
+                        <i class="fas fa-phone-alt"></i>
+                        <h4>اتصل بنا</h4>
+                        <p>+20 100 000 0000</p>
+                        <p>+20 200 000 0000</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="contact-info">
+                        <i class="fas fa-envelope"></i>
+                        <h4>البريد الإلكتروني</h4>
+                        <p>info@quranacademy.com</p>
+                        <p>support@quranacademy.com</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <h3 class="text-center mb-4" style="color: var(--primary);">
+                    <i class="fas fa-paper-plane me-2"></i> أرسل لنا رسالة
+                </h3>
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="row">
+        <div class="form-group mb-3">
+            {{ form.subject.label_tag }}
+            {{ form.subject }}
+            {% if form.subject.errors %}
+                <div class="text-danger">{{ form.subject.errors }}</div>
+            {% endif %}
+        </div>
+<div class="form-group mb-3">
+    {{ form.message.label_tag }}
+    {{ form.message }}
+    {% if form.message.errors %}
+        <div class="text-danger">{{ form.message.errors }}</div>
+    {% endif %}
+</div>
+
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-submit">
+            <i class="fas fa-paper-plane me-2"></i> إرسال الرسالة
+        </button>
+    </div>
+</form>
+
+            </div>
+
+            <div class="mt-5 text-center">
+                <h4>تواصل معنا على وسائل التواصل الاجتماعي</h4>
+                <div class="contact-links justify-content-center">
+                    <a href="https://wa.me/201000000000" target="_blank">
+                        <i class="fab fa-whatsapp"></i> واتساب
+                    </a>
+                    <a href="https://facebook.com/yourpage" target="_blank">
+                        <i class="fab fa-facebook-f"></i> فيسبوك
+                    </a>
+                    <a href="https://t.me/yourusername" target="_blank">
+                        <i class="fab fa-telegram-plane"></i> تيليجرام
+                    </a>
+                    <a href="https://m.me/YourMessengerID" target="_blank">
+                        <i class="fab fa-facebook-messenger"></i> ماسنجر
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Footer -->
+<footer style="background-color:#1a3a30; color:white; padding:20px 0;">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <!-- حقوق النشر -->
+            <p class="mb-0">© 2025 جميع الحقوق محفوظة لموقع بالقرآن نحيا</p>
+
+            <!-- سياسة الخصوصية + الشروط -->
+            <div>
+                <a href="#" class="text-white me-3">سياسة الخصوصية</a>
+                <a href="#" class="text-white">الشروط والأحكام</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Add smooth scrolling to all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add animation on scroll
+        window.addEventListener('scroll', function () {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+
+                if (elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Initialize elements with fade-in class
+        document.addEventListener('DOMContentLoaded', function () {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            });
+
+            // Trigger the animation for elements in view
+            setTimeout(() => {
+                window.dispatchEvent(new Event('scroll'));
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

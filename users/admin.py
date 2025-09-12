@@ -8,6 +8,9 @@ from django.utils.html import format_html
 from django.shortcuts import render, redirect
 from .models import ReviewPlan
 from .models import WeeklyProgress
+from .models import GoogleFormResult
+from .models import Exam
+from .models import ContactMessage
 
 # Action لتفعيل المستخدمين
 @admin.action(description='تفعيل المستخدمين المحددين')
@@ -70,42 +73,83 @@ class StudentProfileAdmin(admin.ModelAdmin):
                 profile.commitment = 0
             profile.save()
         self.message_user(request, f"✅ تم تحديث الالتزام لـ {queryset.count()} طالب")
-@admin.register(Badge)
-class BadgeAdmin(admin.ModelAdmin):
-    list_display = ('student', 'label', 'icon', 'bg', 'text_color', 'label_color')
-    search_fields = ('label', 'student__user__name')
-    list_filter = ('bg', 'text_color')
+        
+# @admin.register(Badge)
+# class BadgeAdmin(admin.ModelAdmin):
+#     list_display = ('student', 'label', 'icon', 'bg', 'text_color', 'label_color')
+#     search_fields = ('label', 'student__user__name')
+#     list_filter = ('bg', 'text_color')
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ("id", "plan", "phase", "day_of_week", "date", "start_time", "period", "is_booked", "trainer", "booked_by_display")
+    list_display = (
+        "id", "plan", "phase", "day_of_week", "date",
+        "start_time", "period", "is_booked", "trainer",
+        "booked_by_display", "participants_list",
+        "participants_count", "is_public"
+    )
 
     list_filter = ("plan", "phase", "day_of_week", "period", "is_booked")
     search_fields = ("day_of_week", "phase", "trainer")
     ordering = ("date", "start_time")
+    filter_horizontal = ("participants",)  # عشان اختيار المشاركين يبقى أسهل
 
-    fieldsets = (
-    ("بيانات الموعد", {
-        "fields": ("plan", "phase", "day_of_week", "date", "start_time", "period")
-    }),
-    ("المعلم", {
-        "fields": ("trainer",)
-    }),
-    ("الحجز", {
-        "fields": ("is_booked", "booked_by")
-    }),
-)
-    # ✨ هنا بنضيف Action جديدة
+    # ✅ نخصص الحقول حسب نوع الموعد
+    def get_fieldsets(self, request, obj=None):
+        base_fields = (
+            ("بيانات الموعد", {
+                "fields": ("plan", "phase", "day_of_week", "date", "start_time", "period")
+            }),
+            ("المعلم", {
+                "fields": ("trainer",)
+            }),
+        )
+
+        if obj and obj.is_public:
+            # جماعي → participants
+            booking_fields = ("الحجز", {
+                "fields": ("is_booked", "is_public", "participants")
+            })
+        else:
+            # فردي → booked_by
+            booking_fields = ("الحجز", {
+                "fields": ("is_booked", "is_public", "booked_by")
+            })
+
+        return base_fields + (booking_fields,)
+
+    # عرض أسماء المشاركين
+    def participants_list(self, obj):
+        return ", ".join([p.email for p in obj.participants.all()])
+
+    participants_list.short_description = "المشاركون"
+
+    # عدد المشاركين
+    def participants_count(self, obj):
+        return obj.participants.count()
+    participants_count.short_description = "عدد المشاركين"
+
+    # عرض اسم الشخص الحاجز في حالة الفردي
+    def booked_by_display(self, obj):
+        return obj.booked_by.name if obj.booked_by else "-"
+    booked_by_display.short_description = "المستخدم الحاجز"
+
+    # لو الموعد محجوز → نخلي booked_by للقراءة فقط
+    def get_readonly_fields(self, request, obj=None):
+        if obj and obj.is_booked:
+            return ("booked_by",)
+        return ()
+
+    # Action لتعيين مرحلة ومدرب
     actions = ["assign_phase_and_trainer"]
 
     def assign_phase_and_trainer(self, request, queryset):
-        """إسناد مرحلة ومدرب للمواعيد المحددة"""
         from django.contrib import messages
-        from .models import Phase, Trainer   # غيّر حسب أسماء الموديل عندك
+        from .models import Phase, Trainer
 
         try:
-            phase = Phase.objects.get(name="المرحلة الأولى")   # حدد المرحلة المطلوبة
-            trainer = Trainer.objects.get(name="ابراهيم")      # حدد المدرب المطلوب
+            phase = Phase.objects.get(name="المرحلة الأولى")
+            trainer = Trainer.objects.get(name="ابراهيم")
         except (Phase.DoesNotExist, Trainer.DoesNotExist):
             self.message_user(request, "❌ المرحلة أو المدرب غير موجودين", level=messages.ERROR)
             return
@@ -114,17 +158,6 @@ class AppointmentAdmin(admin.ModelAdmin):
         self.message_user(request, f"✅ تم تحديث {count} موعد وتعيين المرحلة والمدرب لهم", level=messages.SUCCESS)
 
     assign_phase_and_trainer.short_description = "إسناد المرحلة الأولى والمدرب إبراهيم"
-
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj and obj.is_booked:
-            return ("booked_by",)
-        return ()
-
-    def booked_by_display(self, obj):
-        return obj.booked_by.name if obj.booked_by else "-"
-    booked_by_display.short_description = "المستخدم الحاجز"
-
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
@@ -177,7 +210,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ("name", "duration_days", "duration_text", "price","teacher", "custom_id")
+    list_display = ("name", "duration_days", "duration_text", "exam", "price", "teacher", "plan_code")
     search_fields = ("name",)
     ordering = ("price",)
 
@@ -199,10 +232,10 @@ class MessageAdmin(admin.ModelAdmin):
     search_fields = ('teacher__name', 'student__user__name', 'text')
     list_filter = ('teacher', 'student')
 
-@admin.register(Teacher)
-class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
+# @admin.register(Teacher)
+# class TeacherAdmin(admin.ModelAdmin):
+#     list_display = ('name',)
+#     search_fields = ('name',)
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
@@ -243,3 +276,27 @@ class ReviewPlanAdmin(admin.ModelAdmin):
     def successful_reviews_display(self, obj):
         return obj.successful_reviews
     successful_reviews_display.short_description = "عدد المراجعات الناجحة"
+    
+@admin.register(GoogleFormResult)
+class GoogleFormResultAdmin(admin.ModelAdmin):
+    list_display = ("exam", "email", "score", "form_date", "submitted_at")
+    search_fields = ("email", "score")
+    list_filter = ("exam", "submitted_at")
+
+@admin.register(Exam)
+class ExamAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "stage", "google_form_link", "google_sheet_url", "created_at")
+    search_fields = ("title", "google_form_link", "google_sheet_url")
+    list_filter = ("stage", "created_at")
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created_at', 'status', 'short_message', 'is_read')
+    list_filter = ('status', 'is_read', 'created_at')
+    search_fields = ('name', 'email', 'message')
+    list_editable = ('status', 'is_read')
+    readonly_fields = ('name', 'email', 'message', 'created_at')
+    date_hierarchy = 'created_at'
+    
+    def short_message(self, obj):
+        return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
+    short_message.short_description = 'الرسالة'

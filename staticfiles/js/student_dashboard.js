@@ -1,37 +1,73 @@
-// static/js/student_dashboard.js
-
-// Initialize weekly progress chart
 function initWeeklyChart() {
     const chartDom = document.getElementById('weeklyChart');
     if (!chartDom) return;
 
+    const days = JSON.parse(document.getElementById('days-data').textContent || '[]');
+    let values = JSON.parse(document.getElementById('values-data').textContent || '[]');
+
+    // 🟢 خريطة تحويل النصوص لأرقام (عشان يظهر طول العمود)
+    const evaluationMap = {
+        "ضعيف": 20,
+        "جيد": 40,
+        "جيد جدا": 60,
+        "ممتاز": 80,
+        "ممتاز جدا": 100
+    };
+
+    // 🟢 نرجّع مصفوفة فيها الرقم + التسمية
+    const numericValues = values.map(v => ({
+        value: evaluationMap[v] || 0,
+        label: v || "في انتظار التقييم"
+    }));
+
     const chart = echarts.init(chartDom);
+
     const option = {
         tooltip: {
             trigger: 'axis',
-            axisPointer: { type: 'shadow' }
+            formatter: function (params) {
+                const item = numericValues[params[0].dataIndex];
+                return `${params[0].axisValue}: ${item.label}`;
+            }
         },
         grid: {
-            right: '3%',
-            left: '3%',
-            bottom: '3%',
+            right: '20%', // 🟢 مساحة فاضية على اليمين للتقييمات
+            left: '5%',
+            bottom: '5%',
             containLabel: true
         },
         xAxis: {
             type: 'category',
-            data: JSON.parse(document.getElementById('days-data').textContent || '[]'),
+            data: days,
             axisLine: { lineStyle: { color: '#9ca3af' } },
             axisLabel: { color: '#6b7280' }
         },
         yAxis: {
             type: 'value',
+            min: 0,
+            max: 100,
+            interval: 20,
             axisLine: { show: false },
-            axisLabel: { color: '#6b7280' },
+            axisLabel: {
+                color: '#6b7280',
+                formatter: function (val) {
+                    return Object.keys(evaluationMap).find(key => evaluationMap[key] === val) || "";
+                }
+            },
             splitLine: { lineStyle: { color: '#e5e7eb' } }
         },
         series: [{
-            data: JSON.parse(document.getElementById('values-data').textContent || '[]'),
+            data: numericValues.map(item => item.value),
             type: 'bar',
+            label: {
+                show: true,
+                position: 'right', // 🟢 التقييم يظهر على اليمين خالص
+                formatter: function (params) {
+                    return numericValues[params.dataIndex].label;
+                },
+                color: '#2563eb',
+                fontWeight: 'bold'
+            },
             showBackground: true,
             backgroundStyle: { color: 'rgba(180, 180, 180, 0.1)' },
             itemStyle: {
@@ -44,6 +80,8 @@ function initWeeklyChart() {
     chart.setOption(option);
     window.addEventListener('resize', chart.resize);
 }
+
+
 
 // Initialize progress rings
 function initProgressRings() {

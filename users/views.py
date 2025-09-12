@@ -31,6 +31,29 @@ from users.models import Plan
 import json
 from .models import Notification
 from .models import WeeklyProgress
+from django.db.models import Q
+from django.contrib.auth import login
+
+# views.py
+from django.shortcuts import render
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+
+from .models import GoogleFormResult
+from .google_sheets import fetch_google_form_results
+from .models import Exam
+from .models import StudentProfile
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages as django_messages
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import Message
+from django.contrib.auth import get_user_model
+from .models import ContactMessage as Message
+from .models import ContactMessage
+from .forms import ContactForm
+
 
 def plans_list(request):
     plans = Plan.objects.all()
@@ -47,6 +70,7 @@ def plans_list(request):
 
 
 User = get_user_model()
+
 def signup_view(request):
     if request.method == "POST":
         name = request.POST["name"]
@@ -55,42 +79,60 @@ def signup_view(request):
         password2 = request.POST["password2"]
 
         if password1 != password2:
-            messages.error(request, "كلمتا المرور غير متطابقتين")
+            messages.error(request, "❌ كلمتا المرور غير متطابقتين")
         elif User.objects.filter(email=email).exists():
-            messages.error(request, "البريد الإلكتروني مسجّل مسبقًا")
+            messages.error(request, "❌ البريد الإلكتروني مسجّل مسبقًا")
         else:
             # إنشاء المستخدم
-            user = User.objects.create_user(name=name, email=email, password=password1)
+            user = User.objects.create_user(
+                name=name,
+                email=email,
+                password=password1
+            )
             
             # إنشاء StudentProfile تلقائي
             StudentProfile.objects.create(user=user)
-            
-            messages.success(request, "تم إنشاء الحساب بنجاح! سجّل دخولك الآن.")
-            return redirect("login")
 
-    return render(request, "html/signup.html")
-
-def login_view(request):
-    if request.method == "POST":
-        email = request.POST["email"]
-        password = request.POST["password"]
-
-        user = authenticate(request, email=email, password=password)
-        if user:
-            login(request, user)
+            # تسجيل دخول مباشر بعد التسجيل
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
             # توجيه حسب نوع المستخدم
             if user.user_type == 'student':
-                return redirect("student_dashboard")
+                return redirect("inbox")
             elif user.user_type == 'teacher':
-                return redirect("teacher_dashboard")  # اعمل صفحة المعلم
+                return redirect("inbox")
             elif user.user_type == 'admin':
-                return redirect("admin_dashboard")    # اعمل لوحة التحكم
+                return redirect("inbox")
 
-            # في حالة نوع غير معروف
-            return redirect("student_dashboard")
+            return redirect("inbox")
 
-        messages.error(request, "البريد الإلكتروني أو كلمة المرور غير صحيحة")
+    return render(request, "html/signup.html")
+
+
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        user = authenticate(request, email=email, password=password)
+        if user:
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+            # توجيه حسب نوع المستخدم
+            if user.user_type == 'student':
+                return redirect("inbox")
+            elif user.user_type == 'teacher':
+                return redirect("inbox")
+            elif user.user_type == 'admin':
+                return redirect("inbox")
+
+            return redirect("inbox")
+        else:
+            messages.error(request, "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة")
 
     return render(request, "html/login.html")
 
@@ -130,10 +172,11 @@ def profile_view(request):
 @login_required
 def student_dashboard(request):
     user = request.user
+    # يجيب أو ينشئ البروفايل
     student_profile, created = StudentProfile.objects.get_or_create(user=user)
-    now = timezone.now().date()
-    student = request.user  # لو المستخدم الحالي هو الطالب
 
+    now = timezone.now().date()
+    today = timezone.now().date()
     student_data = {
         'name': user.name,
         'age': student_profile.age,
@@ -150,7 +193,7 @@ def student_dashboard(request):
         "rating": student_profile.rating,
     }
 
-    messages_qs = Message.objects.filter(student=student_profile).order_by('-id')
+    messages_qs = ContactMessage.objects.filter(email=request.user.email)
     teachers = Teacher.objects.all()
     badges = Badge.objects.filter(student=student_profile)
     lessons_upcoming = Lesson.objects.filter(student=request.user, date__gte=now).order_by('date', 'time')
@@ -182,7 +225,8 @@ def student_dashboard(request):
     monthly_level = student_profile.monthly_level
     yearly_level = student_profile.yearly_level
 
-   
+    is_complete = student_profile.is_complete()
+
     # ✅ احسب حالة الاشتراك قبل إضافته للـ context
     if subscription and subscription.end_date.date() > today:
         status = "نشط"
@@ -212,10 +256,32 @@ def student_dashboard(request):
         'evaluation_stars': evaluation_stars,
         'commitment': commitment,
         "latest_subscription": latest_subscription,
-        "student": student,
+        "student": user,
+        "is_complete": is_complete,
     }
 
     return render(request, 'html/student_dashboard.html', context)
+def update_profile(request):
+    if request.method == "POST" and request.user.is_authenticated:
+        user = request.user
+        student_profile, created = StudentProfile.objects.get_or_create(user=user)
+
+        student_profile.age = request.POST.get('age', student_profile.age)
+        student_profile.city = request.POST.get('city', student_profile.city)
+        student_profile.level = request.POST.get('level', student_profile.level)
+        student_profile.current_surah = request.POST.get('current_surah', student_profile.current_surah)
+        student_profile.current_juz = request.POST.get('current_juz', student_profile.current_juz)
+
+        # الصورة
+        if 'image' in request.FILES:
+            student_profile.image = request.FILES['image']
+
+        # الاسم
+        user.name = request.POST.get('name', user.name)
+        user.save()
+        student_profile.save()
+
+    return redirect("inbox")
 
 @login_required
 def weekly_progress(request, student_id):
@@ -273,8 +339,14 @@ def your_view(request):
     return response
 def inbox(request):
     today = timezone.now()
-    user_subscriptions = {}
 
+    # رجع exams كدكشنري مفصول حسب stage/plan.id
+    exams_by_stage = {}
+    all_exams = Exam.objects.all()
+    for exam in all_exams:
+        exams_by_stage.setdefault(exam.stage, []).append(exam)
+
+    user_subscriptions = {}
     if request.user.is_authenticated:
         subs = Subscription.objects.filter(user=request.user)
         for sub in subs:
@@ -284,43 +356,124 @@ def inbox(request):
     return render(
         request,
         "html/inbox.html",
-        {"user_subscriptions": user_subscriptions, "today": today},
+        {
+            "user_subscriptions": user_subscriptions,
+            "today": today,
+            "exams_by_stage": exams_by_stage,
+        },
     )
 
-def teachers(request):
-    return render(request, 'teachers.html')
 
+def teachers(request):
+    return render(request, 'html/teachers.html')
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.conf import settings
+from .forms import ContactForm
+
+@login_required
 def contact(request):
-    return render(request, 'contact.html')
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            message_obj = form.save(commit=False)
+            message_obj.user = request.user
+            message_obj.name = f"{getattr(request.user, 'first_name', '')} {getattr(request.user, 'last_name', '')}".strip() or request.user.email
+            message_obj.email = request.user.email
+            message_obj.message_type = 'message'
+            message_obj.save()
+
+            # إرسال إيميل للإدمن
+            send_mail(
+                f'رسالة جديدة من {message_obj.name}',
+                f'الاسم: {message_obj.name}\nالبريد الإلكتروني: {message_obj.email}\n\n{message_obj.message}',
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.ADMIN_EMAIL],
+                fail_silently=True,
+            )
+
+            messages.success(request, 'تم إرسال رسالتك بنجاح. سنقوم بالرد في أقرب وقت ممكن.')
+            return redirect('student_dashboard')
+    else:
+        form = ContactForm()
+
+    return render(request, 'html/contact.html', {'form': form})
+
+@require_POST
+def mark_as_read(request, message_id):
+    if request.user.is_staff:
+        try:
+            message = ContactMessage.objects.get(id=message_id)
+            message.status = 'read'
+            message.save()
+            return JsonResponse({'status': 'success'})
+        except ContactMessage.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Message not found'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=403)
 
 def waiting_approval(request):
     if not request.user.is_authenticated:
         return redirect('login')
     return render(request, 'html/waiting_approval.html')
-# In your views.py
-
-@login_required(login_url='login')
-def subscribe(request, plan_id=None):
+# In your views.py@login_required(login_url='login')
+def subscribe(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
 
+    # لو الخطة فيها امتحان
+    if plan.exam:
+        results = GoogleFormResult.objects.filter(
+            exam=plan.exam,   # نجيب النتائج الخاصة بالامتحان ده
+            email__iexact=request.user.email
+        ).order_by('-form_date')
+
+        if not results.exists():
+            # مفيش نتيجة أصلاً
+            return redirect("inbox")
+
+        last_result = results.first()
+        percentage = last_result.calculate_percentage()  # أو last_result.score لو عندك النسبة محفوظة
+
+        if percentage is None or percentage < 50:
+            # ساقط
+            return redirect('exam_failed', plan_id=plan.id, exam_id=plan.exam.id)
+        # ناجح 👌
+    # لو الخطة ملهاش امتحان
     if request.method == "POST":
         form = SubscriptionForm(request.POST, request.FILES)
 
         if form.is_valid():
-            # ناخد appointment_id من الـ hidden input
             appointment_id = request.POST.get("appointment_id")
             if not appointment_id:
                 messages.error(request, "يجب اختيار موعد.")
                 return redirect("subscribe", plan_id=plan.id)
 
             try:
-                appointment = Appointment.objects.get(id=appointment_id, plan=plan, is_booked=False)
+                appointment = Appointment.objects.get(id=appointment_id, plan=plan)
             except Appointment.DoesNotExist:
                 messages.error(request, "هذا الموعد غير متاح.")
                 return redirect("subscribe", plan_id=plan.id)
 
-            payment_image = form.cleaned_data.get("payment_image")
+            # التحقق من نوع الموعد
+            if appointment.is_public:
+                # جماعي: تحقق إذا كان المستخدم مشارك بالفعل
+                if request.user in appointment.participants.all():
+                    messages.warning(request, "أنت بالفعل مشارك في هذا الموعد.")
+                    return redirect("subscribe", plan_id=plan.id)
+                # أضف المستخدم إلى المشاركين
+                appointment.participants.add(request.user)
+                appointment.save()
+            else:
+                # فردي: تحقق إذا كان محجوز بالفعل
+                if appointment.is_booked:
+                    messages.error(request, "هذا الموعد غير متاح.")
+                    return redirect("subscribe", plan_id=plan.id)
+                appointment.is_booked = True
+                appointment.booked_by = request.user
+                appointment.save()
 
+            payment_image = form.cleaned_data.get("payment_image")
             start_date = timezone.now()
             end_date = start_date + timedelta(days=plan.duration_days)
 
@@ -339,10 +492,6 @@ def subscribe(request, plan_id=None):
                 end_date=end_date
             )
 
-            appointment.is_booked = True
-            appointment.booked_by = request.user
-            appointment.save()
-
             messages.success(request, "تم إرسال طلب الاشتراك وهو في انتظار موافقة الإدارة.")
             return redirect("waiting_approval")
 
@@ -355,7 +504,7 @@ def subscribe(request, plan_id=None):
     return render(request, "html/subscribe.html", {
         "plan": plan,
         "duration_text": plan.duration_text,
-        "form": form
+        "form": form,
     })
 
 
@@ -366,21 +515,25 @@ def payment(request):
 def payment_review(request):
     return render(request, 'html/payment_review.html')
 
-
+@login_required(login_url='login')
 def book_appointment(request, appointment_id):
-    appointment = Appointment.objects.get(id=appointment_id)
-    Lesson.objects.create(
-        student=request.user,
-        appointment=appointment,
-        teacher=appointment.trainer,
-        date=appointment.date,
-        time=appointment.time,
-        content="حصة قرآن"  # أو أي محتوى آخر
-    )
-    # إعادة التوجيه للداشبورد أو صفحة التأكيد
-    return redirect('student_dashboard')
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+    except Appointment.DoesNotExist:
+        messages.error(request, "هذا الموعد غير موجود.")
+        return redirect("appointments_list")
 
-from django.shortcuts import get_object_or_404
+    # لو الموعد فردي ومتحجز بالفعل
+    if not appointment.is_public:
+        if appointment.is_booked:
+            messages.error(request, "هذا الموعد غير متاح.")
+            return redirect("appointments_list")
+    else:
+        # لو جماعي، تأكد إن المستخدم مش محجوز بالفعل
+        if request.user in appointment.participants.all():
+            messages.warning(request, "أنت بالفعل مشارك في هذا الموعد.")
+            return redirect("appointments_list")
+
 
 def approve_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -427,10 +580,12 @@ def pending_students(request):
 @login_required
 def check_subscription(request):
     try:
-        subscription = Subscription.objects.get(user=request.user)
-        return JsonResponse({'subscribed': subscription.active})
+       return JsonResponse({'subscribed': subscription.is_active})
+
     except Subscription.DoesNotExist:
         return JsonResponse({'subscribed': False})
+    
+    
 @login_required
 def waiting_approval(request):
     subscription = Subscription.objects.filter(user=request.user).last()
@@ -440,31 +595,65 @@ def waiting_approval(request):
 
     # لو فيه اشتراك → اعرض صفحة قيد المراجعة
     return render(request, "html/waiting_approval.html", {"subscription": subscription})
+
 def get_appointments_by_phase(request):
     phase = request.GET.get("phase")
     if not phase:
         return JsonResponse({"error": "phase is required"}, status=400)
 
-    appointments = Appointment.objects.filter(phase=phase).values("id", "day", "time")
+    appointments = Appointment.objects.filter(phase=student_profile.level).order_by('date', 'start_time')
     return JsonResponse(list(appointments), safe=False)
+
+
+PHASE_MAP = {
+    "مبتدئ": "beginner",
+    "beginner": "beginner",
+    "متوسط": "intermediate",
+    "intermediate": "intermediate",
+    "متقدم": "advanced",
+    "advanced": "advanced",
+    "متخصص": "expert",
+    "expert": "expert",
+    "المقرأة العامة": "general",
+    "general": "general"
+}
+
 @login_required(login_url='login')
 def get_appointments(request):
     plan_id = request.GET.get("plan_id")
-    appointments = Appointment.objects.filter(
-        plan_id=plan_id
-    ).order_by("day_of_week", "start_time")
+    phase = request.GET.get("phase")  # ✅ ناخد المرحلة من الـ request
 
-    data = [
-        {
-            "id": a.id,
-            "day": a.day_of_week,
-            "time": a.start_time.strftime("%I:%M %p"),
-            "period": a.get_period_display(),
-            "is_booked": a.is_booked,
-        }
-        for a in appointments
-    ]
+    if not plan_id:
+        return JsonResponse([], safe=False)
+
+    # ✅ فلترة بالمخطط والمرحلة
+    appointments = Appointment.objects.filter(plan_id=plan_id)
+
+    if phase:
+        appointments = appointments.filter(Q(phase=phase) | Q(phase=PHASE_MAP.get(phase, "")))
+
+    # ✅ لو الموعد عام OR مش محجوز
+    appointments = appointments.filter(
+         Q(is_public=True) | Q(is_booked=False)
+    )
+
+
+    data = [{
+        "id": app.id,
+        "day": app.day_of_week,
+        "date": app.date.strftime("%Y-%m-%d") if app.date else "غير محدد",
+        "time": app.start_time.strftime("%H:%M"),
+        "period": app.period,
+        "trainer": str(app.trainer) if app.trainer else "غير محدد",
+        "is_booked": app.is_booked and not app.is_public,   # لو عام يفضل مفتوح
+        "is_public": app.is_public,                        # جديد
+        "participants": [p.email for p in app.participants.all()]
+    } for app in appointments]
+
     return JsonResponse(data, safe=False)
+
+
+
 def meeting_detail(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
     return render(request, "meeting_detail.html", {"meeting": meeting})
@@ -554,3 +743,216 @@ def meeting_view(request, lesson_id=None):
     base = f"quran-app-{request.user.id}-{lesson_id or ''}-{secrets.token_hex(4)}"
     room = slugify(base)  # بدون مسافات
     return render(request, "html/meeting.html", {"room_name": room})
+
+
+from django.shortcuts import render
+def google_form(request, exam_id):
+    exam = get_object_or_404(Exam, id=exam_id)
+    return render(request, "html/google_form.html", {"exam": exam})
+
+
+def exam_list_view(request):
+    exams = Exam.objects.all()
+    return render(request, "exams/exam_list.html", {"exams": exams})
+
+def exam_detail_view(request, pk):
+    exam = get_object_or_404(Exam, pk=pk)
+    return render(request, "exams/exam_detail.html", {"exam": exam})
+
+def exam_results_view(request, pk):
+    exam = get_object_or_404(Exam, pk=pk)
+    if not exam.sheet_id:
+        return HttpResponse("❌ رابط Google Sheet غير صالح")
+
+    data = fetch_google_form_results(exam.sheet_id)
+    return render(request, "exams/exam_results.html", {"exam": exam, "results": data})
+
+def sync_all_results_view(request):
+    if not Exam.objects.exists():
+        return HttpResponse("❌ لا يوجد امتحانات")
+
+    for exam in Exam.objects.all():
+        if exam.sheet_id:
+            fetch_and_store_entries(exam.sheet_id)
+
+    return HttpResponse("✅ تم تحديث البيانات لكل الامتحانات")
+
+def sync_job_trigger_view(request):
+    sync_google_form_job()
+    return HttpResponse("✅ تم تحديث البيانات عبر الـ Job")
+
+def sync_google_form_results(request):
+    SHEET_ID = "1JVXMnTC_Elh9bZckyBr6ZPeesPk_G2qkhe4Z7ucmP1E"
+    data = fetch_google_form_results(SHEET_ID)
+
+    for row in data:
+        email = row.get("عنوان البريد الإلكتروني")
+        score = row.get("النتيجة")
+
+        # نخزن باقي الأعمدة
+        answers = {k: v for k, v in row.items() if k not in ["عنوان البريد الإلكتروني", "النتيجة"]}
+
+        # نعمل سجل جديد لكل إدخال
+        GoogleFormResult.objects.create(
+            email=email,
+            score=score,
+            answers=answers,
+        )
+
+    return HttpResponse("✅ تم تخزين كل النماذج كسجلات منفصلة")
+
+def sync_google_form_job():
+    exams = Exam.objects.exclude(google_sheet_url__isnull=True).exclude(google_sheet_url="")
+    for exam in exams:
+        sheet_id = exam.sheet_id
+        if not sheet_id:
+            print(f"❌ رابط غير صالح: {exam.google_sheet_url}")
+            continue
+
+        new_entries = fetch_and_store_entries(sheet_id, exam)
+        print(f"✅ {exam.title} - تمت إضافة {len(new_entries)} نتيجة جديدة")
+
+@login_required(login_url='login')
+def exam_failed(request, plan_id, exam_id):
+    exam = get_object_or_404(Exam, id=exam_id)
+
+    result = GoogleFormResult.objects.filter(
+        exam=exam,
+        email=request.user.email
+    ).order_by('-form_date', '-submitted_at').first()
+
+    context = {
+        "exam": exam,
+        "score": result.score if result else None,
+        "percentage": result.percentage if result else None,
+    }
+    return render(request, "html/exam_failed.html", context)
+
+User = get_user_model()
+
+
+@login_required
+def message_list(request):
+    # هات كل الرسائل الخاصة بالمستخدم
+    user_messages = ContactMessage.objects.filter(user=request.user).order_by('-created_at')
+
+    # علّم الرسائل كـ مقروءة
+    user_messages.filter(is_read=False).update(is_read=True)
+
+    context = {
+        'contact_messages': user_messages,  # ده اللي بيتعرض في التمبلت
+        'unread_count': ContactMessage.objects.filter(user=request.user, is_read=False).count()
+    }
+    return render(request, 'html/message_list.html', context)
+
+@login_required
+def message_detail(request, message_id):
+    try:
+        message = get_object_or_404(Message, id=message_id, user=request.user)
+        
+        # تحديث حالة الرسالة كمقروءة
+        if not message.is_read:
+            message.is_read = True
+            message.status = 'read'
+            message.save(update_fields=['is_read', 'status'])
+        
+        # معالجة إرسال الرد
+        if request.method == 'POST' and 'content' in request.POST:
+            content = request.POST.get('content', '').strip()
+            if content:  # التأكد من وجود محتوى قبل الحفظ
+                reply = Message.objects.create(
+                    user=request.user,
+                    message_type=message.message_type,
+                    subject=f"Re: {message.subject}",
+                    content=content,
+                    parent_message=message,
+                    status='unread',
+                    is_from_admin=not request.user.is_staff  # إذا كان المستخدم ليس مدير، فالرد من المستخدم
+                )
+                
+                # معالجة المرفقات
+                if 'attachments' in request.FILES:
+                    for file in request.FILES.getlist('attachments'):
+                        attachment = MessageAttachment(
+                            message=reply,
+                            file=file,
+                            file_name=file.name,
+                            file_type=file.content_type,
+                            file_size=file.size
+                        )
+                        attachment.save()
+                
+                # تحديث حالة الرسالة الأصلية
+                message.status = 'replied'
+                message.save(update_fields=['status'])
+                
+                # إعادة توجيه المستخدم بنجاح
+                messages.success(request, 'تم إرسال الرد بنجاح')
+                return redirect('message_detail', message_id=message_id)
+            else:
+                messages.error(request, 'يرجى إدخال محتوى الرد')
+        
+        # الحصول على سجل المحادثة
+        thread = Message.objects.filter(
+            models.Q(id=message.parent_message_id) | 
+            models.Q(parent_message=message) |
+            models.Q(parent_message_id=message.parent_message_id)
+        ).exclude(id=message.id).order_by('created_at')
+
+        return render(request, 'html/message_detail.html', {
+            'message': message,
+            'thread': thread,
+            'unread_count': get_unread_count(request.user)
+        })
+        
+    except Exception as e:
+        messages.error(request, f'حدث خطأ: {str(e)}')
+        return redirect('message_list')
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        content = request.POST.get('content')
+        message_type = request.POST.get('message_type', 'message')
+        
+        if subject and content:
+            Message.objects.create(
+                user=request.user,
+                subject=subject,
+                content=content,
+                message_type=message_type,
+                is_from_admin=False
+            )
+            django_messages.success(request, 'تم إرسال رسالتك بنجاح')
+            return redirect('message_list')
+    
+    return redirect('contact')
+
+@login_required
+def delete_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, user=request.user)
+    message.delete()
+    django_messages.success(request, 'تم حذف الرسالة بنجاح')
+    return redirect('message_list')
+
+def unread_messages_count(request):
+    if request.user.is_authenticated:
+        return {
+            'unread_messages_count': Message.objects.filter(user=request.user, is_read=False).count()
+        }
+    return {}
+def get_unread_count(request):
+    count = Message.objects.filter(is_read=False, receiver=request.user).count()
+    return JsonResponse({'unread_count': count})
+
+
+def privacy_view(request):
+    return render(request, 'html/privacy.html')
+def faq_view(request):
+    return render(request, 'html/faq.html')
+def terms_view(request):
+    return render(request, 'html/terms.html')
+
+def about_me(request):
+    return render(request, 'html/about_me.html')

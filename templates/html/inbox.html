@@ -17,6 +17,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>منصة تعليم القرآن الكريم</title>
+  <!-- Font Awesome -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  rel="stylesheet"
+/>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/inbox.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
@@ -60,15 +66,14 @@
     <div class="container">
       <!-- الشعار -->
       <a class="navbar-brand d-flex align-items-center" href="#">
-<a href="{% url 'inbox' %}">
-    <img src="{% static 'images/logo.png' %}" alt="شعار المنصة" style="height: 60px; margin-left: 15px;">
-</a>
+        <a href="{% url 'inbox' %}">
+          <img src="{% static 'images/logo.png' %}" alt="شعار المنصة" style="height: 60px; margin-left: 15px;">
+        </a>
         <a href="{% url 'inbox' %}" style="text-decoration: none;">
-  <span class="fw-bold" style="color: #ffffff; font-size: 1.4rem; font-family: 'Tajawal', sans-serif;">
-    بالقرآن نحيا
-  </span>
-</a>
-
+          <span class="fw-bold" style="color: #ffffff; font-size: 1.4rem; font-family: 'Tajawal', sans-serif;">
+            بالقرآن نحيا
+          </span>
+        </a>
       </a>
 
       <!-- زر القائمة المنسدلة للهواتف -->
@@ -86,7 +91,7 @@
             <a class="nav-link fw-medium" href="{% url 'inbox' %}" style="color: #ffffff;">الرئيسية</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link fw-medium" href="{% url 'teachers' %}" style="color: #ffffff;">المعلمون</a>
+            <a class="nav-link fw-medium" href="{% url 'about_me' %}" style="color: #ffffff;">المعلمون</a>
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link fw-medium" href="{% url 'contact' %}" style="color: #ffffff;">تواصل معنا</a>
@@ -96,6 +101,15 @@
         <!-- لو المستخدم مسجل دخول -->
         {% if user.is_authenticated %}
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <!-- زرار لوحة التحكم يظهر فقط للأدمن -->
+          {% if user.is_staff %}
+          <li class="nav-item mx-2">
+            <a href="/admin/" class="btn btn-danger text-white" style="border-color: #c9b67a;">
+              ⚙️ لوحة التحكم
+            </a>
+          </li>
+          {% endif %}
+
           <li class="nav-item mx-2">
             <a href="{% url 'student_dashboard' %}" class="btn btn-outline-light"
               style="border-color: #c9b67a; color: #ffffff;">صفحتي</a>
@@ -105,27 +119,34 @@
               تسجيل الخروج
             </a>
           </li>
-
-
         </ul>
         {% else %}
-          <a href="{% url 'login' %}" class="btn btn-outline-light" style="border-color: #c9b67a; color: #ffffff;">
-            تسجيل الدخول
-          </a>
-          <a href="{% url 'signup' %}" class="btn btn-outline-light" style="border-color: #c9b67a; color: #ffffff;">
-            انشاء حساب
-          </a>
+        <a href="{% url 'login' %}" class="btn btn-outline-light" style="border-color: #c9b67a; color: #ffffff;">
+          تسجيل الدخول
+        </a>
+        <a href="{% url 'signup' %}" class="btn btn-outline-light" style="border-color: #c9b67a; color: #ffffff;">
+          انشاء حساب
+        </a>
         {% endif %}
 
       </div>
-
+    </div>
   </nav>
+
 
   <!-- مساحة فارغة لمنع المحتوى من الاختفاء خلف النافبار الثابت -->
   <div style="height: 0px;"></div>
   <section class="position-relative mb-4">
-   <img src="{% static 'images/image-1754863136624.png' %}"
-      alt="مسجد" class="w-100" style="max-height:260px; object-fit:cover; filter:brightness(0.85);">
+
+
+
+    <img src="{% static 'images/image-1754863136624.png' %}" alt="مسجد" class="w-100"
+      style="max-height:260px; object-fit:cover; filter:brightness(0.85);">
+
+
+
+
+
     <div class="position-absolute top-50 start-50 translate-middle text-white text-center"
       style="text-shadow:0 2px 8px #eeeaea;">
       <h1 class="display-5 fw-bold">بكلمه من القرءان نحن نعيش</h1>
@@ -134,129 +155,118 @@
 
   <!-- القسم 2: المقرأة العامة (تصحيح القراءة عملياً) -->
 
-
-  <!-- القسم 3: التعريف بالمراحل -->
   <section class="container my-5">
-    <h2 class="fw-bold text-center mb-5" style="color:#333;">التعريف بالمراحل</h2>
-    <!-- مبتدئ -->
+    <h2 class="fw-bold text-center mb-5" style="color:#333;"> التعريف بالمراحل</h2>
     <div class="row align-items-center mb-5 section-card p-3">
       <div class="col-md-8">
-        <h2 class="fw-bold text-center mb-3">مرحلة حفظ الأطفال (المبتدئين):</h2>
-        <p class="mb-2" style="font-size:1.1rem; color:#37506b;">
-          هذا الفرع مُخصص للأطفال الذين يبدأ أعمارهم عادة من سن 4 إلى 12 عامًا، ويُعتبر الخطوة الأولى في طريق ربط الطفل
-          بكتاب الله عز وجل.<br><br>
-          يتم فيه التركيز على تعليم الحروف الهجائية بشكل سليم، ثم تعليم القراءة من المصحف، ثم البدء في الحفظ جزءًا بعد
-          جزء.<br><br>
-          يُراعى في هذا الفرع استخدام الوسائل التعليمية المناسبة لعمر الطفل مثل: التكرار، الألعاب التعليمية، المسابقات،
-          والمحفزات المعنوية.<br><br>
-          يتم تشجيع الطفل على حب القرآن وغرس قيمة حب القصص النبوية والقرآنية المرتبطة بالسور التي يحفظها.
-        </p>
+        <h3 class="fw-bold text-center mb-3" style="color:#2a5d3f;">🌱 مرحلة حفظ القرآن للمبتدئين</h3>
+        <ul style="font-size:1.08rem; color:#37506b; line-height:2;">
+          <li><b>البداية السهلة:</b> بوابتك الأولى لحفظ كتاب الله، مهما كان عمرك أو خلفيتك.</li>
+          <li><b>خطة واضحة:</b> تتبع خطة مبسطة تسهّل عليك خطوات الحفظ تدريجيًا.</li>
+          <li><b>تعلم القراءة الصحيحة:</b> تدريب عملي على مخارج الحروف والنطق السليم.</li>
+          <li><b>حفظ سهل ومرن:</b> حفظ سور وآيات قصيرة تناسب وقتك وقدرتك.</li>
+          <li><b>دعم مستمر:</b> متابعة لبناء الثقة وتحفيزك للاستمرار حتى تصل لمراحل متقدمة.</li>
+          <li><b>هدف المرحلة:</b> تأسيس علاقة حب مع القرآن، وغرس قيمة القصص النبوية والقرآنية في قلب الطفل أو المبتدئ،
+            ليكون الحفظ رحلة ممتعة خالية من التعقيد أو الضغط.</li>
+        </ul>
       </div>
       <div class="col-md-4 text-center">
-        <img src="{% static 'images/image-1754863136624.png' %}"
-      alt="مسجد" class="w-100" style="max-height:260px; object-fit:cover; filter:brightness(0.85);">
+        <img src="{% static 'images/image-1754863136624.png' %}" alt="مسجد" class="w-100"
+          style="max-height:260px; object-fit:cover; filter:brightness(0.85);">
       </div>
     </div>
-    <!-- متوسط -->
+
     <div class="row align-items-center mb-5 section-card p-3">
       <div class="col-md-8">
-        <h2 class="fw-bold text-center mb-3">مرحلة مراجعة القرآن (المتوسط):</h2>
-        <p class="mb-2" style="font-size:1.1rem; color:#37506b;">
-          هذا الفرع مخصص لمن أتم حفظ القرآن الكريم أو اقترب من الختام، ويهدف إلى تثبيت الحفظ وضبط المتون.<br><br>
-          يتم التركيز على إتقان القراءة الصحيحة، وتصحيح الأخطاء، وضبط التجويد العملي، مع العناية بفهم المعاني الإجمالية
-          للسور.<br><br>
-          يشمل البرنامج: مراجعة الحفظ القديم، تصحيح التلاوة، تعلم أحكام التجويد، مع التركيز على ضبط المتشابهات
-          القرآنية.<br><br>
-          يتميز هذا المستوى بوجود اختبارات دورية لقياس مدى التقدم، مع متابعة أسبوعية من المعلمين المتخصصين.
-        </p>
+        <h3 class="fw-bold text-center mb-3" style="color:#2a5d3f;">📖 مرحلة مراجعة القرآن (المتوسط)</h3>
+        <ul style="font-size:1.08rem; color:#37506b; line-height:2;">
+          <li><b>تثبيت الحفظ:</b> مخصصة لمن أتم الحفظ أو اقترب من ذلك، وتهدف لترسيخ ما تم حفظه.</li>
+          <li><b>إتقان التلاوة:</b> تركيز على القراءة الصحيحة، تصحيح الأخطاء، وضبط أحكام التجويد عمليًا.</li>
+          <li><b>فهم المعاني:</b> العناية بفهم المعاني الإجمالية للسور.</li>
+          <li><b>برنامج متكامل:</b> مراجعة الحفظ القديم، تصحيح التلاوة، تعلم أحكام التجويد، وضبط المتشابهات القرآنية.
+          </li>
+          <li><b>متابعة وتقييم:</b> اختبارات دورية لمتابعة التقدم، وإشراف أسبوعي من معلمين متخصصين.</li>
+        </ul>
       </div>
       <div class="col-md-4 text-center">
-        <img src="{% static 'images/image-1754863212385.png' %}"
-          class="img-fluid section-img" style="max-width:220px;">
+        <img src="{% static 'images/image-1754863212385.png' %}" class="img-fluid section-img" style="max-width:220px;">
       </div>
     </div>
-    <!-- متقدم -->
+
     <div class="row align-items-center mb-5 section-card p-3">
       <div class="col-md-8">
-        <h4 class="fw-bold">مرحلة المثبّت والراغب في دراسة المتشابهات (متقدم):</h4>
-        <p class="mb-2" style="font-size:1.1rem; color:#37506b;">
-          هذا الفرع خاص بمن ثبت حفظه بشكل عام، لكنه يريد الارتقاء في مستواه من خلال تعلم المتشابهات بين الآيات، وهي من
-          الأدوات المهمة لتثبيت الحفظ.
-
-          الطالب يتدرّب فيه على الفروقات الدقيقة بين الآيات المتشابهة في اللفظ والمعنى، من خلال جداول مقارنة وتمارين
-          تدريبية.
-
-          تُعقد اختبارات شفهية لتحفيز الطالب على الاستدعاء السريع والدقيق للآيات، بالإضافة لاختبارات تحريرية لاختبار
-          الفهم والتمييز.
-
-          هذه المرحلة تحتاج صبرًا وجهدًا كبيرًا، ولذلك تكون مسبوقة بمرحلة تأهيل تُسمى "تمهيد الإجازات"، يتأكد فيها من
-          سلامة الحفظ وجودته.
-
-          ويُطلب من الطالب كتابة الآيات بخط يده خلال المراجعة، لأن الكتابة تُساعد في تثبيت الحفظ وتقوية الذاكرة البصرية.
-
-        </p>
+        <h3 class="fw-bold text-center mb-3" style="color:#2a5d3f;">🌟 مرحلة المثبّت والراغب في دراسة المتشابهات (تمهيد
+          الإجازة)</h3>
+        <ul style="font-size:1.08rem; color:#37506b; line-height:2;">
+          <li><b>تثبيت راسخ:</b> للطالب الذي أنهى الحفظ ويرغب في ترسيخه والتعمق في المتشابهات.</li>
+          <li><b>مراجعة شاملة:</b> مراجعة متدرجة لجميع الأجزاء مع دراسة المتشابهات بين الآيات والسور.</li>
+          <li><b>تقوية الذاكرة:</b> تعزيز قوة الحفظ والتمييز بين المتشابهات.</li>
+          <li><b>استعداد للإجازة:</b> اكتساب مهارات الاستعداد العملي لمرحلة الإجازة بالسند.</li>
+          <li><b>هدف المرحلة:</b> الانتقال من مجرد حافظ إلى متقن مؤهل للترقي إلى الإجازة القرآنية.</li>
+        </ul>
       </div>
       <div class="col-md-4 text-center">
-        <img src="{% static 'images/image-1754863228363.png' %}"
-          class="img-fluid section-img" style="max-width:220px;">
+        <img src="{% static 'images/image-1754863228363.png' %}" class="img-fluid section-img" style="max-width:220px;">
       </div>
     </div>
-    <!-- متخصص -->
+
     <div class="row align-items-center mb-5 section-card p-3">
       <div class="col-md-8">
-        <h2 class="fw-bold text-center mb-3">مرحلة التخصص في القراءات (الخبير):</h2>
-        <p class="mb-2" style="font-size:1.1rem; color:#37506b;">
-          هذا الفرع مخصص للمتخصصين في القراءات القرآنية والحاصلين على إجازة في القراءات.<br><br>
-          يشمل البرنامج: دراسة القراءات العشر الكبرى، مع التوسع في علم القراءات، ودراسة أصول الأداء، مع العناية بالمتون
-          العلمية في هذا الفن.<br><br>
-          يتم في هذه المرحلة دراسة الشاطبية والدرة مع شرحهما، ودراسة طرق الأداء والروايات، مع العناية بضبط
-          المتشابهات.<br><br>
-          يشترط للقبول في هذا البرنامج الحصول على إجازة في القراءات العشر من طريق الشاطبية والدرة.
-        </p>
+        <h3 class="fw-bold text-center mb-3" style="color:#2a5d3f;">🏅 مرحلة التخصص في القرآن (الإجازات)</h3>
+        <ul style="font-size:1.08rem; color:#37506b; line-height:2;">
+          <li><b>المرحلة العليا:</b> مخصصة لمن أتم الحفظ وأتقن التلاوة ويرغب في التخصص القرآني.</li>
+          <li><b>تلقي القرآن بالسند:</b> دراسة الأسانيد والإجازات المتصلة بالنبي ﷺ.</li>
+          <li><b>دراسة القراءات:</b> تعلم القراءات المتواترة وضبط الأداء.</li>
+          <li><b>نيل الإجازة:</b> الحصول على الإجازة بالسند المتصل بعد استكمال الشروط.</li>
+          <li><b>تأهيل المعلمين:</b> إعداد الطالب ليكون معلّمًا وناقلًا للقرآن للأجيال القادمة.</li>
+          <li><b>هدف المرحلة:</b> أن يصبح الطالب حاملًا للسند والإجازة، وجزءًا من السلسلة الذهبية لحملة القرآن عبر
+            العصور.</li>
+        </ul>
       </div>
       <div class="col-md-4 text-center">
-        <img src="{% static 'images/image-1754863246636.png' %}"
-          class="img-fluid section-img" style="max-width:220px;">
+        <img src="{% static 'images/image-1754863246636.png' %}" class="img-fluid section-img" style="max-width:220px;">
       </div>
     </div>
-  </section>
-
-  <!-- القسم 3: المقرأة العامة (تصحيح القراءة عملي) -->
-  <section class="container my-5">
     <div class="row section-card align-items-center p-4 mb-5"
       style="background: #f9f5f0; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #eee8dd;">
-      <div class="col-md-3 text-center">
-        <img src="{% static 'images/image-1754863261895.png' %}"
-          class="img-fluid section-img mb-3 mb-md-0"
+      <!-- الصور في الهاتف جنب بعض -->
+      <div class="d-flex d-md-none justify-content-between mb-3">
+        <img src="{% static 'images/image-1754863261895.png' %}" class="img-fluid section-img"
+          style="max-width:47%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 3px solid #fff;">
+        <img src="{% static 'images/image-1754863261895.png' %}" class="img-fluid section-img"
+          style="max-width:47%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 3px solid #fff;">
+      </div>
+      <!-- الصورة اليمنى للشاشات المتوسطة فما فوق -->
+      <div class="col-md-3 text-center d-none d-md-block">
+        <img src="{% static 'images/image-1754863261895.png' %}" class="img-fluid section-img mb-3 mb-md-0"
           style="max-width:170px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 3px solid #fff;">
       </div>
+      <!-- النص في المنتصف -->
       <div class="col-md-6 text-center py-3">
         <h3 class="fw-bold mb-3"
           style="color: #8b5a2b; font-family: 'Tajawal', sans-serif; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
-          <i class="bi bi-book-half me-2"></i> المقرأة العامة
+          <i class="bi bi-book-half me-2"></i> المقرأة العامة (تصحيح القراءة عملي)
         </h3>
-        <p class="mb-2" style="font-size:1.1rem; color:#37506b;">
-          المقرأة العامة (لتصحيح القراءة - عملي):
-          متاحة للجميع، سواء للحفاظ أو من لا يزالون في بدايات الطريق، وهدفها هو تحسين التلاوة وتصحيح الأخطاء العملية في
-          القراءة.
-          تُركز على التطبيق المباشر لأحكام التجويد، مثل الغنة، الإخفاء، الإدغام، المدود، ومخارج الحروف.
-          يُخصص وقت في كل جلسة لتلاوة الطالب وتصحيح الأخطاء بدقة، مع التدريب المستمر حتى يتقن القراءة كما أنزلت.
-          تُعقد جلسات أسبوعية منتظمة بإشراف معلمين مجازين ذوي خبرة في تعليم الكبار والصغار.
-        </p>
+        <ul style="font-size:1.08rem; color:#37506b; line-height:2; text-align:right;">
+          <li><b>متاحة للجميع:</b> سواء للحفاظ أو المبتدئين، تهدف لتحسين التلاوة وتصحيح الأخطاء.</li>
+          <li><b>تطبيق عملي:</b> تركيز على التطبيق المباشر لأحكام التجويد (الغنة، الإخفاء، الإدغام، المدود، المخارج...).
+          </li>
+          <li><b>تصحيح فردي:</b> تخصيص وقت لكل طالب لتصحيح قراءته بدقة.</li>
+          <li><b>تدريب مستمر:</b> جلسات أسبوعية منتظمة تحت إشراف معلمين مجازين وذوي خبرة.</li>
+          <li><b>هدف المقرأة:</b> إتقان القراءة كما أُنزلت، وغرس حب القرآن في القلب.</li>
+        </ul>
         <a class="btn btn-primary future-link"
           style="background-color: #8b5a2b; border-color: #8b5a2b; padding: 8px 30px; font-weight: 500; border-radius: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
           انضم إلينا الآن <i class="bi bi-arrow-left me-2"></i>
         </a>
       </div>
-      <div class="col-md-3 text-center">
-        <img src="{% static 'images/image-1754863261895.png' %}"
-          class="img-fluid section-img mt-3 mt-md-0"
+      <!-- الصورة اليسرى للشاشات المتوسطة فما فوق -->
+      <div class="col-md-3 text-center d-none d-md-block">
+        <img src="{% static 'images/image-1754863261895.png' %}" class="img-fluid section-img mt-3 mt-md-0"
           style="max-width:170px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 3px solid #fff;">
       </div>
     </div>
   </section>
-
-
   <!-- القسم 1: الهيرو والبطاقات -->
   <section class="container my-4">
     <div class="row mb-3">
@@ -264,19 +274,19 @@
         <b>اختار مرحلتك لتعلم القرآن أو اشترك في المقرأة العامة</b>
       </div>
       <div class="d-flex justify-content-center flex-wrap gap-3">
-
-        <!-- مبتدئ -->
         <div class="card section-card p-3" style="min-width:210px; max-width:250px;">
           <div class="card-body text-center">
             <h5 class="card-title">مبتدئ</h5>
             <p class="card-text">ابدأ بنطق الحروف وتعلم الأساسيات</p>
+
             {% with sub=user_subscriptions.1 %}
             {% if sub %}
             {% if sub.status == "approved" and sub.end_date > today %}
             <span class="badge bg-success">مشترك</span>
             {% elif sub.status == "pending" %}
-            <span class="badge bg-warning text-dark">قيد المراجعة</span>
-            {% else %}
+            <a href="{% url 'waiting_approval' %}">
+              <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            </a> {% else %}
             <a href="{% url 'subscribe' 1 %}" class="btn btn-warning">الاشتراك</a>
             {% endif %}
             {% else %}
@@ -286,22 +296,50 @@
           </div>
         </div>
 
+
         <!-- متوسط -->
         <div class="card section-card p-3" style="min-width:210px; max-width:250px;">
           <div class="card-body text-center">
             <h5 class="card-title">متوسط</h5>
             <p class="card-text">بناء ثقتك وتعلم المزيد من التجويد</p>
+
             {% with sub=user_subscriptions.2 %}
             {% if sub %}
             {% if sub.status == "approved" and sub.end_date > today %}
             <span class="badge bg-success">مشترك</span>
             {% elif sub.status == "pending" %}
-            <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            <a href="{% url 'waiting_approval' %}">
+              <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            </a>
             {% else %}
             <a href="{% url 'subscribe' 2 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.2 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% else %}
             <a href="{% url 'subscribe' 2 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.2 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% endwith %}
           </div>
@@ -312,17 +350,44 @@
           <div class="card-body text-center">
             <h5 class="card-title">متقدم</h5>
             <p class="card-text">إتقان فن التلاوة والتعمق في الأحكام</p>
+
             {% with sub=user_subscriptions.3 %}
             {% if sub %}
             {% if sub.status == "approved" and sub.end_date > today %}
             <span class="badge bg-success">مشترك</span>
             {% elif sub.status == "pending" %}
-            <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            <a href="{% url 'waiting_approval' %}">
+              <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            </a>
             {% else %}
             <a href="{% url 'subscribe' 3 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.3 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% else %}
             <a href="{% url 'subscribe' 3 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.3 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% endwith %}
           </div>
@@ -333,44 +398,78 @@
           <div class="card-body text-center">
             <h5 class="card-title">متخصص</h5>
             <p class="card-text">كن خبيراً وعلّم غيرك</p>
+
             {% with sub=user_subscriptions.4 %}
             {% if sub %}
             {% if sub.status == "approved" and sub.end_date > today %}
             <span class="badge bg-success">مشترك</span>
             {% elif sub.status == "pending" %}
-            <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            <a href="{% url 'waiting_approval' %}">
+              <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            </a>
             {% else %}
             <a href="{% url 'subscribe' 4 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.4 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% else %}
             <a href="{% url 'subscribe' 4 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.4 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% endwith %}
           </div>
         </div>
+
+
+
 
         <!-- المقرأة العامة -->
         <div class="col-12 mt-4">
           <div class="card section-card text-center p-4">
             <b>المقرأة العامة</b>
             <p>أكبر مساحة تعليمية وسطية لتصحيح التلاوة عملياً</p>
-            {% with sub=user_subscriptions.5 %}
+            {% with sub=user_subscriptions.7 %}
             {% if sub %}
             {% if sub.status == "approved" and sub.end_date > today %}
             <span class="badge bg-success">مشترك</span>
             {% elif sub.status == "pending" %}
-            <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            <a href="{% url 'waiting_approval' %}">
+              <span class="badge bg-warning text-dark">قيد المراجعة</span>
+            </a>
             {% else %}
-            <a href="{% url 'subscribe' 5 %}" class="btn btn-warning">الاشتراك</a>
+            <a href="{% url 'subscribe' 7 %}" class="btn btn-warning">الاشتراك</a>
             {% endif %}
             {% else %}
-            <a href="{% url 'subscribe' 5 %}" class="btn btn-warning">الاشتراك</a>
+            <a href="{% url 'subscribe' 7 %}" class="btn btn-warning">الاشتراك</a>
             {% endif %}
             {% endwith %}
           </div>
         </div>
 
       </div>
+
+    </div>
 
   </section>
 
@@ -412,16 +511,34 @@
           </div>
 
           <div class="mt-4 pt-3 border-top border-secondary">
-            <div class="d-flex justify-content-center gap-4 mb-3">
-              <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-facebook"></i></a>
-              <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-twitter-x"></i></a>
-              <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-youtube"></i></a>
-              <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-instagram"></i></a>
+
+            <div class="social-links">
+              <!-- WhatsApp -->
+              <a href="https://wa.me/201234567890?text=مرحبا%20اريد%20التواصل%20معك" target="_blank"
+                class="me-2 text-success">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+
+              <!-- Telegram -->
+              <a href="https://t.me/YourTelegramUsername" target="_blank" class="me-2 text-info">
+                <i class="fab fa-telegram-plane"></i>
+              </a>
+
+              <!-- Facebook -->
+              <a href="https://www.facebook.com/YourProfile" target="_blank" class="me-2 text-primary">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+
+              <!-- Messenger -->
+              <a href="https://m.me/YourMessengerID" target="_blank" class="me-2 text-primary">
+                <i class="fab fa-facebook-messenger"></i>
+              </a>
+
             </div>
             <div class="small text-muted">
-              <a href="#" class="text-decoration-none me-3" style="color: #c9b67a;">سياسة الخصوصية</a>
-              <a href="#" class="text-decoration-none me-3" style="color: #c9b67a;">الشروط والأحكام</a>
-              <a href="#" class="text-decoration-none" style="color: #c9b67a;">الأسئلة الشائعة</a>
+              <a href="{% url 'privacy' %}" class="text-decoration-none me-3" style="color: #c9b67a;">سياسة الخصوصية</a>
+              <a href="{% url 'terms' %}" class="text-decoration-none me-3" style="color: #c9b67a;">الشروط والأحكام</a>
+              <a href="{% url 'faq' %}" class="text-decoration-none" style="color: #c9b67a;">الأسئلة الشائعة</a>
             </div>
             <div class="mt-2" style="color: #8a9e94;">
               &copy; 2025 منصة تعليم القرآن الكريم. جميع الحقوق محفوظة

@@ -202,50 +202,51 @@ document.addEventListener("DOMContentLoaded", function () {
     confirmBtn.disabled = !ok;
     return ok;
   }
+// تحميل المواعيد بناءً على plan.id + phase
+function loadAppointments(){
+  const container = document.getElementById("appointments-container");
+  container.innerHTML = "جاري تحميل المواعيد...";
 
-  // تحميل المواعيد بناءً على plan.id
-  function loadAppointments(){
-    const container = document.getElementById("appointments-container");
-    container.innerHTML = "جاري تحميل المواعيد...";
-    fetch(`/get_appointments/?plan_id={{ plan.id }}`)
-      .then(r => r.json())
-      .then(list => {
-        container.innerHTML = "";
-        if(list.length === 0){
-          container.innerHTML = "<p>لا توجد مواعيد متاحة لهذه المرحلة حالياً.</p>";
-          checkFormReady();
-          return;
+  fetch(`/get_appointments/?plan_id={{ plan.id }}&phase={{ plan.name }}`)
+    .then(r => r.json())
+    .then(list => {
+      container.innerHTML = "";
+      if(list.length === 0){
+        container.innerHTML = "<p>لا توجد مواعيد متاحة لهذه المرحلة حالياً.</p>";
+        checkFormReady();
+        return;
+      }
+      list.forEach(app => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-outline-primary appointment-btn m-1";
+        btn.textContent = `${app.day} - ${app.time} ${app.period}`;
+        if(app.is_booked){
+          btn.disabled = true;
+          btn.classList.add("booked");
+        }else{
+          btn.addEventListener("click", () => {
+            appointmentInput.value = app.id;
+            container.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            checkFormReady();
+          });
         }
-        list.forEach(app => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "btn btn-outline-primary appointment-btn m-1";
-          btn.textContent = `${app.day} - ${app.time} ${app.period}`;
-          if(app.is_booked){
-            btn.disabled = true;
-            btn.classList.add("booked");
-          }else{
-            btn.addEventListener("click", () => {
-              appointmentInput.value = app.id;
-              container.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-              btn.classList.add("active");
-              checkFormReady();
-            });
-          }
-          container.appendChild(btn);
-        });
-      })
-      .catch(() => {
-        container.innerHTML = "<span class='text-danger'>حدث خطأ أثناء تحميل المواعيد</span>";
+        container.appendChild(btn);
       });
-  }
+    })
+    .catch(() => {
+      container.innerHTML = "<span class='text-danger'>حدث خطأ أثناء تحميل المواعيد</span>";
+    });
+}
 
-  paymentInput.addEventListener("change", () => checkFormReady());
-  document.querySelector("form.form").addEventListener("submit", function(e){
-    if(!checkFormReady(true)){ e.preventDefault(); }
-  });
+paymentInput.addEventListener("change", () => checkFormReady());
+document.querySelector("form.form").addEventListener("submit", function(e){
+  if(!checkFormReady(true)){ e.preventDefault(); }
+});
 
-  loadAppointments();
+loadAppointments();
+
 });
 </script>
         </div>
