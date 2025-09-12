@@ -170,17 +170,24 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-
+# ملفات static (CSS, JS, images المستخدمة في القوالب)
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/BialQuranNahia/BialQuranNahia/staticfiles'
+
+# ملفات media (صور يرفعها المستخدم مثلاً)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/home/BialQuranNahia/BialQuranNahia/media'
+
+# STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(str(BASE_DIR), 'static'),
 ]
 
-STATIC_ROOT = os.path.join(str(BASE_DIR), 'staticfiles')
+# STATIC_ROOT = os.path.join(str(BASE_DIR), 'staticfiles')
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(str(BASE_DIR), 'media')
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(str(BASE_DIR), 'media')
 # في الإنتاج فقط: شغل هذا الأمر بعد ضبط الإعدادات
 # python manage.py collectstatic
 # Default primary key field type
