@@ -10,7 +10,7 @@ import sys
 
 import os
 # أضف مسار المشروع
-path = '/home/ibrahim66/BialQuranNahia'
+path = '/home/BialQuranNahia/BialQuranNahia'
 if path not in sys.path:
     sys.path.append(path)
 
