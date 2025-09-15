@@ -417,7 +417,8 @@ def waiting_approval(request):
     if not request.user.is_authenticated:
         return redirect('login')
     return render(request, 'html/waiting_approval.html')
-# In your views.py@login_required(login_url='login')
+
+@login_required(login_url='login')
 def subscribe(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
 
