@@ -65,6 +65,7 @@ path("subscribe/<int:plan_id>/", views.subscribe, name="subscribe"),
     path("about-me/", views.about_me, name="about_me"),
     path('faq/', views.FAQ_view(), name='faq'),
 path("faq/contact/", views.contact, name="faq_contact"),
+path('google-form/<int:exam_id>/', views.google_form, name='google_form')
 
 ]
 if settings.DEBUG:

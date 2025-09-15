@@ -447,17 +447,17 @@
         <!-- المقرأة العامة -->
         <div class="col-12 mt-4">
           <div class="card section-card text-center p-4">
-            <b>المقرأة العامة</b>
-            <p>أكبر مساحة تعليمية وسطية لتصحيح التلاوة عملياً</p>
-            {% with sub=user_subscriptions.7 %}
+           <h5 class="card-title">مبتدئ</h5>
+            <p class="card-text">ابدأ بنطق الحروف وتعلم الأساسيات</p>
+
+            {% with sub=user_subscriptions.1 %}
             {% if sub %}
             {% if sub.status == "approved" and sub.end_date > today %}
             <span class="badge bg-success">مشترك</span>
             {% elif sub.status == "pending" %}
             <a href="{% url 'waiting_approval' %}">
               <span class="badge bg-warning text-dark">قيد المراجعة</span>
-            </a>
-            {% else %}
+            </a> {% else %}
             <a href="{% url 'subscribe' 7 %}" class="btn btn-warning">الاشتراك</a>
             {% endif %}
             {% else %}

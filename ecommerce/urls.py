@@ -81,6 +81,7 @@ path('message_list/', views.message_list, name='message_list'),
     path("about-me/", views.about_me, name="about_me"),
     path('faq/', views.faq_view, name='faq'),
 path("faq/contact/", views.contact, name="faq_contact"),
+path('google-form/<int:exam_id>/', views.google_form, name='google_form')
 
 ]
 

@@ -417,28 +417,28 @@ def waiting_approval(request):
     if not request.user.is_authenticated:
         return redirect('login')
     return render(request, 'html/waiting_approval.html')
-# In your views.py@login_required(login_url='login')
+
+@login_required(login_url='login')
 def subscribe(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
 
-    # لو الخطة فيها امتحان
+    # ----------- التحقق من الامتحان -----------
     if plan.exam:
         results = GoogleFormResult.objects.filter(
-            exam=plan.exam,   # نجيب النتائج الخاصة بالامتحان ده
+            exam=plan.exam,
             email__iexact=request.user.email
         ).order_by('-form_date')
 
+        # مفيش أي نتيجة = لازم يمتحن
         if not results.exists():
-            # مفيش نتيجة أصلاً
-            return redirect("inbox")
+            return redirect('google_form', exam_id=plan.exam.id)
 
         last_result = results.first()
-        percentage = last_result.calculate_percentage()  # أو last_result.score لو عندك النسبة محفوظة
+        percentage = last_result.calculate_percentage()  # أو last_result.score
 
-        if percentage is None or percentage < 50:
-            # ساقط
+        # لو النسبة أقل من 50 = راسب
+        if not percentage or percentage < 50:
             return redirect('exam_failed', plan_id=plan.id, exam_id=plan.exam.id)
-        # ناجح 👌
     # لو الخطة ملهاش امتحان
     if request.method == "POST":
         form = SubscriptionForm(request.POST, request.FILES)
@@ -781,25 +781,7 @@ def sync_job_trigger_view(request):
     sync_google_form_job()
     return HttpResponse("✅ تم تحديث البيانات عبر الـ Job")
 
-def sync_google_form_results(request):
-    SHEET_ID = "1JVXMnTC_Elh9bZckyBr6ZPeesPk_G2qkhe4Z7ucmP1E"
-    data = fetch_google_form_results(SHEET_ID)
 
-    for row in data:
-        email = row.get("عنوان البريد الإلكتروني")
-        score = row.get("النتيجة")
-
-        # نخزن باقي الأعمدة
-        answers = {k: v for k, v in row.items() if k not in ["عنوان البريد الإلكتروني", "النتيجة"]}
-
-        # نعمل سجل جديد لكل إدخال
-        GoogleFormResult.objects.create(
-            email=email,
-            score=score,
-            answers=answers,
-        )
-
-    return HttpResponse("✅ تم تخزين كل النماذج كسجلات منفصلة")
 
 def sync_google_form_job():
     exams = Exam.objects.exclude(google_sheet_url__isnull=True).exclude(google_sheet_url="")
