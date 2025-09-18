@@ -10,8 +10,8 @@ import sys
 
 import os
 # أضف مسار المشروع
-path = r"C:\Users\DATA Technology\Desktop\test5\ecommerce"
-# path = '/home/BialQuranNahia/BialQuranNahia'
+# path = r"C:\Users\DATA Technology\Desktop\test5\ecommerce"
+path = '/home/BialQuranNahia/BialQuranNahia'
 if path not in sys.path:
     sys.path.append(path)
 
