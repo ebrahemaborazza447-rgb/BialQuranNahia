@@ -258,6 +258,27 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #2c5c52;
+<<<<<<< HEAD
+=======
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+    padding-top: 0;
+  }
+  
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+>>>>>>> 05b6d7af37048e71c299c89840cab9fc8ad784bc
 }
 
 /* Print Styles */

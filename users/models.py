@@ -473,7 +473,9 @@ class GoogleFormResult(models.Model):
 
     def __str__(self):
         return f"{self.exam.title if self.exam else 'No Exam'} - {self.email} - {self.score} ({self.percentage}%)"
-
+    class Meta:
+        verbose_name = _("نتائج الامتحان ")
+        verbose_name_plural = _("نتائج الامتحانات ")
 
 class Exam(models.Model):
     STAGES = (
@@ -512,6 +514,9 @@ class Exam(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_stage_display()})"
+    class Meta:
+        verbose_name = _("الامتحانات ")
+        verbose_name_plural = _("الامتحانات ")
 class ContactMessage(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -539,3 +544,6 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.status}"
+    class Meta:
+        verbose_name = _("الرسائل الوارده ")
+        verbose_name_plural = _("الرسائل الوارده ")

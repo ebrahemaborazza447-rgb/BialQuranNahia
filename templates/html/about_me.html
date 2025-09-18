@@ -63,32 +63,32 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content">
-                        <h1 class="mb-4">مرحباً، أنا <span class="text-primary">[اسمك]</span></h1>
-                        <p class="lead mb-4 typewriter" data-text="مطور ويب مبدع ومحترف في إنشاء تجارب رقمية استثنائية"></p>
+                        <h1 class="mb-4">مرحباً، أنا <span class="text-primary">الشيخ يوسف جمل</span></h1>
+                        <p class="lead mb-4 typewriter" data-text="معلّم للقرآن الكريم ومتخصص في أحكام التجويد وتحفيظ كتاب الله بأسلوب ميسر وتفاعلي"></p>
                         <div class="d-flex gap-3 mb-4">
-                            <a href="#contact" class="btn btn-primary">تواصل معي</a>
+                            <a href="{% url 'contact' %}" class="btn btn-primary">تواصل معي</a>
                         </div>
                         <div class="social-links">
                             <!-- WhatsApp -->
-<a href="https://wa.me/201234567890?text=مرحبا%20اريد%20التواصل%20معك" 
+<a href="https://wa.me/201092785005?text=مرحبا%20اريد%20التواصل%20معك" 
    target="_blank" class="me-2 text-success">
    <i class="fab fa-whatsapp"></i>
 </a>
 
 <!-- Telegram -->
-<a href="https://t.me/YourTelegramUsername" 
+<a href="https://t.me/+201092785005" 
    target="_blank" class="me-2 text-info">
    <i class="fab fa-telegram-plane"></i>
 </a>
 
 <!-- Facebook -->
-<a href="https://www.facebook.com/YourProfile" 
+<a href="https://www.facebook.com/ywsf.jml.882916?locale=ar_AR" 
    target="_blank" class="me-2 text-primary">
    <i class="fab fa-facebook-f"></i>
 </a>
 
 <!-- Messenger -->
-<a href="https://m.me/YourMessengerID" 
+<a href="https://m.me/ywsf.jml.882916" 
    target="_blank" class="me-2 text-primary">
    <i class="fab fa-facebook-messenger"></i>
 </a>
@@ -99,7 +99,7 @@
                 <div class="col-lg-6">
     <div class="hero-image text-center">
         <div class="profile-image mx-auto">
-            <img src="{% static 'images/myphoto.png' %}" 
+            <img src="{% static 'images/yosufgamal.png' %}" 
                  alt="صورة شخصية" 
                  class="img-fluid rounded-circle">
         </div>
@@ -109,86 +109,94 @@
             </div>
         </div>
     </section>
-
-    <!-- About Section -->
-    <section id="about" class="section bg-light">
-        <div class="container">
-            <h2 class="section-title">من أنا</h2>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h3 class="card-title">مرحباً بكم في عالمي الإبداعي</h3>
-                            <p class="card-text">
-                                أنا مطور ويب شغوف بإنشاء تجارب رقمية مذهلة. أتمتع بخبرة واسعة في تطوير الويب وتصميم واجهات المستخدم.
-                                أسعى دائماً لتعلم التقنيات الجديدة وتحسين مهاراتي لتقديم أفضل الحلول لعملائي.
-                            </p>
-                            <div class="info-box p-3 bg-light rounded">
-                                <p><i class="fas fa-envelope me-2"></i> example@example.com</p>
-                                <p><i class="fas fa-phone me-2"></i> +1234567890</p>
-                                <p><i class="fas fa-map-marker-alt me-2"></i> المدينة، البلد</p>
-                            </div>
+<!-- About Section -->
+<section id="about" class="section bg-light">
+    <div class="container">
+        <h2 class="section-title">من أنا</h2>
+        <div class="row">
+            <!-- النبذة الشخصية -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title">مرحباً بكم في منصتي لتعليم القرآن الكريم</h3>
+                        <p class="card-text">
+                            أنا مُعلّم للقرآن الكريم شغوف بنشر علوم التلاوة والتجويد، وأسعى إلى تيسير تعلم كتاب الله 
+                            لجميع المستويات عبر أساليب حديثة وتفاعلية. هدفي أن أُيسّر للمتعلمين رحلتهم مع القرآن 
+                            وأن أغرس فيهم حبّ التلاوة الصحيحة والعمل بآياته.
+                        </p>
+                        <div class="info-box p-3 bg-light rounded">
+                            <p><i class="fas fa-envelope me-2"></i> braagamal25@gmail.com  </p>
+                            <p><i class="fas fa-phone me-2"></i> +20 109 278 5005</p>
+                            <p><i class="fas fa-map-marker-alt me-2"></i> دمياط – مصر</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h3 class="card-title">تعليمي وخبراتي</h3>
-                            <div class="mb-4">
-                                <h5>بكالوريوس في علوم الحاسوب</h5>
-                                <p class="text-muted">جامعة ... | 2018 - 2022</p>
-                                <p>تخصصت في تطوير الويب وتصميم واجهات المستخدم</p>
-                            </div>
-                            <div>
-                                <h5>خبرة عملية</h5>
-                                <p class="text-muted">مطور ويب في شركة ... | 2020 - الآن</p>
-                                <p>تطوير وتصميم تطبيقات الويب باستخدام أحدث التقنيات</p>
-                            </div>
+            </div>
+            <!-- التعليم والخبرات -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title">تعليمي وخبراتي</h3>
+                        <div class="mb-4">
+                            <h5>دراسة شرعية في علوم القرآن</h5>
+                            <p class="text-muted">معهد القراءات – دمياط</p>
+                            <p>متخصص في أحكام التجويد وطرق تحفيظ القرآن الكريم.</p>
+                        </div>
+                        <div>
+                            <h5>خبرة في تعليم وتحفيظ القرآن</h5>
+                            <p class="text-muted">مدرّس قرآن في مراكز ودورات مختلفة</p>
+                            <p>أُدرّس التلاوة الصحيحة وأدرب الطلاب على مخارج الحروف
+                               باستخدام مناهج وأساليب حديثة وتفاعلية.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Skills Section -->
-    <section id="skills" class="section">
-        <div class="container">
-            <h2 class="section-title">مهاراتي</h2>
-            <div class="row">
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-code fa-3x mb-3 text-primary"></i>
-                            <h3 class="h5 card-title">تطوير الويب</h3>
-                            <p class="card-text">تصميم وتطوير مواقع الويب باستخدام أحدث التقنيات</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-paint-brush fa-3x mb-3 text-primary"></i>
-                            <h3 class="h5 card-title">تصميم UI/UX</h3>
-                            <p class="card-text">تصميم واجهات مستخدم جذابة وسهلة الاستخدام</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-mobile-alt fa-3x mb-3 text-primary"></i>
-                            <h3 class="h5 card-title">متجاوب</h3>
-                            <p class="card-text">تصميم متجاوب يعمل على جميع الأجهزة</p>
-                        </div>
+<!-- Skills Section -->
+<section id="skills" class="section">
+    <div class="container">
+        <h2 class="section-title">مهاراتي</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x mb-3 text-primary"></i>
+                        <h3 class="h5 card-title">متقن لعلم التجويد</h3>
+                        <p class="card-text">
+                            إتقان كامل لقواعد وأحكام التجويد مع القدرة على تعليمها وتطبيقها بدقة في التلاوة.
+                        </p>
                     </div>
                 </div>
             </div>
-            
-            
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-paint-brush fa-3x mb-3 text-primary"></i>
+                        <h3 class="h5 card-title">الصبر على المتعلم</h3>
+                        <p class="card-text">
+                            قدرة عالية على التعامل مع مختلف مستويات الطلاب بهدوء وتشجيعهم على الاستمرار في التعلم.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mobile-alt fa-3x mb-3 text-primary"></i>
+                        <h3 class="h5 card-title">تدارس طرق التعليم المختلفة</h3>
+                        <p class="card-text">
+                            البحث الدائم عن أساليب مبتكرة ومتنوعة لتوصيل المعلومة بما يناسب كل متعلم.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
+
 
 
     <!-- Footer -->
@@ -196,25 +204,25 @@
         <div class="container">
             <div class="social-links">
                 <!-- WhatsApp -->
-<a href="https://wa.me/201234567890?text=مرحبا%20اريد%20التواصل%20معك" 
+<a href="https://wa.me/201092785005?text=مرحبا%20اريد%20التواصل%20معك" 
    target="_blank" class="me-2 text-success">
    <i class="fab fa-whatsapp"></i>
 </a>
 
 <!-- Telegram -->
-<a href="https://t.me/YourTelegramUsername" 
+<a href="https://t.me/+201092785005" 
    target="_blank" class="me-2 text-info">
    <i class="fab fa-telegram-plane"></i>
 </a>
 
 <!-- Facebook -->
-<a href="https://www.facebook.com/YourProfile" 
+<a href="https://www.facebook.com/ywsf.jml.882916?locale=ar_AR" 
    target="_blank" class="me-2 text-primary">
    <i class="fab fa-facebook-f"></i>
 </a>
 
 <!-- Messenger -->
-<a href="https://m.me/YourMessengerID" 
+<a href="https://m.me/ywsf.jml.882916" 
    target="_blank" class="me-2 text-primary">
    <i class="fab fa-facebook-messenger"></i>
 </a>
