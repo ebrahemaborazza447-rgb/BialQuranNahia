@@ -422,24 +422,24 @@ def waiting_approval(request):
 def subscribe(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
 
-    # ----------- التحقق من الامتحان -----------
-    if plan.exam:
-        results = GoogleFormResult.objects.filter(
-            exam=plan.exam,
-            email__iexact=request.user.email
-        ).order_by('-form_date')
+    # # ----------- التحقق من الامتحان -----------
+    # if plan.exam:
+    #     results = GoogleFormResult.objects.filter(
+    #         exam=plan.exam,
+    #         email__iexact=request.user.email
+    #     ).order_by('-form_date')
 
-        # مفيش أي نتيجة = لازم يمتحن
-        if not results.exists():
-            return redirect('google_form', exam_id=plan.exam.id)
+    #     # مفيش أي نتيجة = لازم يمتحن
+    #     if not results.exists():
+    #         return redirect('google_form', exam_id=plan.exam.id)
 
-        last_result = results.first()
-        percentage = last_result.calculate_percentage()  # أو last_result.score
+    #     last_result = results.first()
+    #     percentage = last_result.calculate_percentage()  # أو last_result.score
 
-        # لو النسبة أقل من 50 = راسب
-        if not percentage or percentage < 50:
-            return redirect('exam_failed', plan_id=plan.id, exam_id=plan.exam.id)
-    # لو الخطة ملهاش امتحان
+    #     # لو النسبة أقل من 50 = راسب
+    #     if not percentage or percentage < 50:
+    #         return redirect('exam_failed', plan_id=plan.id, exam_id=plan.exam.id)
+    # # لو الخطة ملهاش امتحان
     if request.method == "POST":
         form = SubscriptionForm(request.POST, request.FILES)
 
