@@ -309,11 +309,36 @@
             {% elif sub.status == "pending" %}
             <a href="{% url 'waiting_approval' %}">
               <span class="badge bg-warning text-dark">قيد المراجعة</span>
-            </a> {% else %}
+            </a>
+            {% else %}
             <a href="{% url 'subscribe' 2 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.2 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% else %}
             <a href="{% url 'subscribe' 2 %}" class="btn btn-warning">الاشتراك</a>
+
+            {% with stage_exams=exams_by_stage.2 %}
+            {% if stage_exams %}
+            {% for exam in stage_exams %}
+            <div class="mt-2">
+              <a href="{% url 'google_form' exam.id %}" class="btn btn-primary">اذهب للامتحان</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>❌ لا يوجد امتحانات متاحة حالياً</p>
+            {% endif %}
+            {% endwith %}
             {% endif %}
             {% endwith %}
           </div>
