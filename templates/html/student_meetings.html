@@ -1,0 +1,11 @@
+<h2>الاجتماعات القادمة</h2>
+<ul>
+  {% for meeting in meetings %}
+    <li>
+      <b>{{ meeting.title }}</b> - {{ meeting.date }}
+      <a href="{{ meeting.meeting_link }}" target="_blank">انضمام</a>
+    </li>
+  {% empty %}
+    <li>لا يوجد اجتماعات مجدولة</li>
+  {% endfor %}
+</ul>

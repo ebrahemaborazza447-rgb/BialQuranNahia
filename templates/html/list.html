@@ -1,0 +1,46 @@
+<!-- templates/users/notifications.html -->
+<div class="bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-bold mb-4">🔔 التنبيهات</h2>
+
+    {% if notifications %}
+        <ul class="space-y-4">
+            {% for notif in notifications %}
+            <li class="border-b pb-2 {% if not notif.is_read %}bg-gray-100{% endif %}">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">{{ notif.title }}</span>
+                    <span class="text-sm text-gray-500">{{ notif.created_at|date:"H:i d-m-Y" }}</span>
+                </div>
+                <p class="text-gray-700">{{ notif.message }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-gray-400">لا توجد تنبيهات حالياً</p>
+    {% endif %}
+</div>
+
+<script>
+    // ✅ طلب إذن لإرسال الإشعارات من المتصفح
+    document.addEventListener("DOMContentLoaded", () => {
+        if ("Notification" in window) {
+            if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        }
+    });
+
+    // ✅ دالة لإظهار إشعار فوري
+    function showNotification(title, message) {
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(title, {
+                body: message,
+                icon: "/static/images/bell.png" // ضع أيقونة مخصصة هنا
+            });
+        }
+    }
+
+    // ✅ مثال: محاكاة وصول تنبيه جديد بعد 5 ثواني
+    setTimeout(() => {
+        showNotification("📌 خطة المراجعة", "حان وقت مراجعة سورة البقرة اليوم!");
+    }, 5000);
+</script>

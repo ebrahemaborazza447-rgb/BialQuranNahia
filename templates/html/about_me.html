@@ -1,0 +1,244 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحتي الشخصية</title>
+    <!-- Bootstrap RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'inbox' %}">
+                <img src="{% static 'images/logo.png' %}" alt="شعار المنصة">
+                بالقرآن نحيا
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل التنقل">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inbox' %}">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about_me' %}">المعلمون</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'contact' %}">تواصل معنا</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <a href="/admin/" class="btn btn-outline-light me-2">
+                        <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'student_dashboard' %}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-user"></i> صفحتي
+                    </a>
+                    
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="mb-4">مرحباً، أنا <span class="text-primary">الشيخ يوسف جمل</span></h1>
+                        <p class="lead mb-4 typewriter" data-text="معلّم للقرآن الكريم ومتخصص في أحكام التجويد وتحفيظ كتاب الله بأسلوب ميسر وتفاعلي"></p>
+                        <div class="d-flex gap-3 mb-4">
+                            <a href="{% url 'contact' %}" class="btn btn-primary">تواصل معي</a>
+                        </div>
+                        <div class="social-links">
+                            <!-- WhatsApp -->
+<a href="https://wa.me/201092785005?text=مرحبا%20اريد%20التواصل%20معك" 
+   target="_blank" class="me-2 text-success">
+   <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Telegram -->
+<a href="https://t.me/+201092785005" 
+   target="_blank" class="me-2 text-info">
+   <i class="fab fa-telegram-plane"></i>
+</a>
+
+<!-- Facebook -->
+<a href="https://www.facebook.com/ywsf.jml.882916?locale=ar_AR" 
+   target="_blank" class="me-2 text-primary">
+   <i class="fab fa-facebook-f"></i>
+</a>
+
+<!-- Messenger -->
+<a href="https://m.me/ywsf.jml.882916" 
+   target="_blank" class="me-2 text-primary">
+   <i class="fab fa-facebook-messenger"></i>
+</a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+    <div class="hero-image text-center">
+        <div class="profile-image mx-auto">
+            <img src="{% static 'images/yosufgamal.png' %}" 
+                 alt="صورة شخصية" 
+                 class="img-fluid rounded-circle">
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </section>
+<!-- About Section -->
+<section id="about" class="section bg-light">
+    <div class="container">
+        <h2 class="section-title">من أنا</h2>
+        <div class="row">
+            <!-- النبذة الشخصية -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title">مرحباً بكم في منصتي لتعليم القرآن الكريم</h3>
+                        <p class="card-text">
+                            أنا مُعلّم للقرآن الكريم شغوف بنشر علوم التلاوة والتجويد، وأسعى إلى تيسير تعلم كتاب الله 
+                            لجميع المستويات عبر أساليب حديثة وتفاعلية. هدفي أن أُيسّر للمتعلمين رحلتهم مع القرآن 
+                            وأن أغرس فيهم حبّ التلاوة الصحيحة والعمل بآياته.
+                        </p>
+                        <div class="info-box p-3 bg-light rounded">
+                            <p><i class="fas fa-envelope me-2"></i> braagamal25@gmail.com  </p>
+                            <p><i class="fas fa-phone me-2"></i> +20 109 278 5005</p>
+                            <p><i class="fas fa-map-marker-alt me-2"></i> دمياط – مصر</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- التعليم والخبرات -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="card-title">تعليمي وخبراتي</h3>
+                        <div class="mb-4">
+                            <h5>دراسة شرعية في علوم القرآن</h5>
+                            <p class="text-muted">معهد القراءات – دمياط</p>
+                            <p>متخصص في أحكام التجويد وطرق تحفيظ القرآن الكريم.</p>
+                        </div>
+                        <div>
+                            <h5>خبرة في تعليم وتحفيظ القرآن</h5>
+                            <p class="text-muted">مدرّس قرآن في مراكز ودورات مختلفة</p>
+                            <p>أُدرّس التلاوة الصحيحة وأدرب الطلاب على مخارج الحروف
+                               باستخدام مناهج وأساليب حديثة وتفاعلية.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills" class="section">
+    <div class="container">
+        <h2 class="section-title">مهاراتي</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x mb-3 text-primary"></i>
+                        <h3 class="h5 card-title">متقن لعلم التجويد</h3>
+                        <p class="card-text">
+                            إتقان كامل لقواعد وأحكام التجويد مع القدرة على تعليمها وتطبيقها بدقة في التلاوة.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-paint-brush fa-3x mb-3 text-primary"></i>
+                        <h3 class="h5 card-title">الصبر على المتعلم</h3>
+                        <p class="card-text">
+                            قدرة عالية على التعامل مع مختلف مستويات الطلاب بهدوء وتشجيعهم على الاستمرار في التعلم.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mobile-alt fa-3x mb-3 text-primary"></i>
+                        <h3 class="h5 card-title">تدارس طرق التعليم المختلفة</h3>
+                        <p class="card-text">
+                            البحث الدائم عن أساليب مبتكرة ومتنوعة لتوصيل المعلومة بما يناسب كل متعلم.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <!-- WhatsApp -->
+<a href="https://wa.me/201092785005?text=مرحبا%20اريد%20التواصل%20معك" 
+   target="_blank" class="me-2 text-success">
+   <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Telegram -->
+<a href="https://t.me/+201092785005" 
+   target="_blank" class="me-2 text-info">
+   <i class="fab fa-telegram-plane"></i>
+</a>
+
+<!-- Facebook -->
+<a href="https://www.facebook.com/ywsf.jml.882916?locale=ar_AR" 
+   target="_blank" class="me-2 text-primary">
+   <i class="fab fa-facebook-f"></i>
+</a>
+
+<!-- Messenger -->
+<a href="https://m.me/ywsf.jml.882916" 
+   target="_blank" class="me-2 text-primary">
+   <i class="fab fa-facebook-messenger"></i>
+</a>
+
+            </div>
+            <p class="mb-0">© 2025 جميع الحقوق محفوظة لموقع بالقرآن نحيا</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="العودة للأعلى">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>منصتي - سجل الاشتراكات</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-gray-100">
+
+    <!-- الهيدر -->
+    <header class="bg-white shadow p-4">
+        <h1 class="text-xl font-bold">منصة القرآن الكريم</h1>
+    </header>
+
+    <!-- المحتوى -->
+    <main class="p-6">
+        <h2 class="text-2xl font-bold mb-6">📒 سجل الاشتراكات</h2>
+
+        <div class="bg-gray-50 rounded-lg p-6">
+            <div class="overflow-x-auto">
+                <table class="table w-full border">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="p-2">رقم الاشتراك</th>
+                            <th class="p-2">الخطة</th>
+                            <th class="p-2">المبلغ</th>
+                            <th class="p-2">الحالة</th>
+                            <th class="p-2">تاريخ البداية</th>
+                            <th class="p-2">تاريخ الانتهاء</th>
+                            <th class="p-2">الإيصال</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subscriptions %}
+                        <tr class="border-t">
+                            <td class="p-2">{{ sub.id }}</td>
+                            <td class="p-2">{{ sub.plan.name }}</td>
+                            <td class="p-2">{{ sub.price }} جنيه</td>
+                            <td class="p-2">{{ sub.display_status }}</td>
+                            <td class="p-2">{{ sub.start_date|date:"Y-m-d H:i" }}</td>
+                            <td class="p-2">{{ sub.end_date|date:"Y-m-d H:i" }}</td>
+                            <td class="p-2">
+                              {% if sub.payment_image %}
+                                <a href="{{ sub.payment_image.url }}" target="_blank" class="text-primary hover:underline">عرض الإيصال</a>
+                              {% else %}
+                                لا يوجد
+                              {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">لا يوجد اشتراكات</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- الفوتر -->
+    <footer class="bg-white border-t py-4 text-center text-gray-500 text-sm">
+        جميع الحقوق محفوظة &copy; 2025
+    </footer>
+
+</body>
+</html>
