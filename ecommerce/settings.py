@@ -125,15 +125,27 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecommerce',
-      'USER': 'ecommerce',
-        'PASSWORD': '032165',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "shopdb",
+        "USER": "shopuser",
+        "PASSWORD": "123456",
+        "HOST": "db",            # نفس اسم الخدمة في docker-compose
+        "PORT": 5432,
     }
 }
+
+# DATABASES = {
+#    'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'shopdb',
+#       'USER': 'ecommerce',
+#         'PASSWORD': '123456',
+#         'HOST': 'postgres',  # اسم الخدمة في ملف docker-compose.yml
+#         # 'HOST': 'localhost',  # 👈 مهم علي الجهاز 
+#         'PORT': '5432',
+#     }
+# }
 
 
 
@@ -141,6 +153,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+    
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
